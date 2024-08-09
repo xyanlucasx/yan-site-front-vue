@@ -128,7 +128,6 @@ export default {
         });
         formData.append("description", this.description);
         const response = await this.$api.post("images",formData);
-        console.log(response.data);
         this.loading = false;
         this.openImageModal(response.data);
         this.resetForm();

@@ -4,6 +4,8 @@ import 'vuetify/styles'
 
 // Vuetify
 import { createVuetify } from 'vuetify'
+import * as directives from 'vuetify/directives';
+
 
 // Icons
 import customDownload from '@/customIcons/customDownload.vue'
@@ -37,6 +39,7 @@ const customAliases = {
 }
 
 export default createVuetify({
+  directives,
   icons: {
     defaultSet: 'mdi',
     aliases: {
@@ -56,7 +59,10 @@ export default createVuetify({
           error: '#B00020', // Vermelho para erros
           info: '#2196F3', // Azul para informações
           success: '#4CAF50', // Verde para sucesso
-          warning: '#FB8C00' // Laranja para avisos
+          warning: '#FB8C00', // Laranja para avisos
+          gradientone: '#F8FFAE',
+          gradienttwo: '#C5796D',
+          gradientthree: '#DBE6F6'
         }
       },
       dark: {
@@ -70,7 +76,10 @@ export default createVuetify({
           error: '#CF6679', // Vermelho suave para erros
           info: '#2196F3', // Azul mantido no modo escuro
           success: '#4CAF50', // Verde mantido no modo escuro
-          warning: '#FB8C00' // Laranja mantido no modo escuro
+          warning: '#FB8C00', // Laranja mantido no modo escuro
+          gradientone: '#2a1933',
+          gradienttwo: '#412b23',
+          gradientthree: '#424152'
         }
       }
     }

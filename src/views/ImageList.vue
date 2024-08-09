@@ -200,7 +200,6 @@ export default {
       this.imageModal = true;
     },
     async deleteImage() {
-      console.log(this.indexToDelete);
       try {
         this.deletingImage = true;
         await this.$api.delete(`images/${this.items[this.indexToDelete]._id}`);

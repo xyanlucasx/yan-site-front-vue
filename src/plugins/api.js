@@ -1,7 +1,5 @@
 import axios from 'axios'
-console.log(import.meta.env)
 const baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000/'
-console.log(baseURL)
 const RETRY = 0
 
 const api = {
@@ -11,7 +9,6 @@ const api = {
     axiosConfig.interceptors.request.use(
       (request) => {
         const token = app.config.globalProperties.$store.getters.getUser.token
-        console.log('token',token)
 
         if (token) {
           request.headers.Authorization = `Bearer ${token}`

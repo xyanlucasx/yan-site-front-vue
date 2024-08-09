@@ -8,10 +8,9 @@ const getDateHour = (date) => {
 
     const formatedDate = _twoDigitsLength(dateObject.getDate()) + '/' +
         _twoDigitsLength(dateObject.getMonth() + 1) + '/' +
-        dateObject.getFullYear() + ' ' +
+        dateObject.getFullYear().toString().slice(2) + ' ' +
         _twoDigitsLength(dateObject.getHours()) + ':' +
-        _twoDigitsLength(dateObject.getMinutes()) + ':' +
-        _twoDigitsLength(dateObject.getSeconds());
+        _twoDigitsLength(dateObject.getMinutes());
 
     return formatedDate
 }

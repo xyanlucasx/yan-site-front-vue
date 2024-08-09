@@ -1,166 +1,131 @@
 <template>
   <v-container>
-    <v-card class="header">
-      <v-row class="pt-3 pl-3 pr-3">
-        <v-col xs="6" md="4" sm="6">
-          <v-autocomplete
-            v-model="selectedCountries"
-            label="Country"
-            :items="countries"
-            item-title="name"
-            item-value="code"
-            multiple
-            variant="outlined"
-            density="compact"
-            clearable
-            autocomplete="null"
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                v-if="data.index < 1"
-                :key="data.item"
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                class="truncate-chip"
-              >
-                <span class="truncate">{{ data.item.title }}</span>
-              </v-chip>
-              <span v-else-if="data.index === 1"
-                >+{{ selectedCountries.length - 1 }}</span
-              >
-            </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col xs="6" md="4" sm="6">
-          <v-autocomplete
-            label="State/Province/Region"
-            :items="computedStates"
-            v-model="selectedStates"
-            item-title="name"
-            item-value="code"
-            multiple
-            variant="outlined"
-            density="compact"
-            clearable
-            autocomplete="null"
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                v-if="data.index < 1"
-                :key="data.item"
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                class="truncate-chip"
-              >
-                <span class="truncate">{{ data.item.title }}</span>
-              </v-chip>
-              <span v-else-if="data.index === 1"
-                >+{{ selectedStates.length - 1 }}</span
-              >
-            </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col xs="6" md="4" sm="6">
-          <v-autocomplete
-            label="City"
-            :items="computedCities"
-            v-model="selectedCities"
-            item-title="name"
-            item-value="code"
-            multiple
-            variant="outlined"
-            density="compact"
-            clearable
-            autocomplete="null"
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                v-if="data.index < 1"
-                :key="data.item"
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                class="truncate-chip"
-              >
-                <span class="truncate">{{ data.item.title }}</span>
-              </v-chip>
-              <span v-else-if="data.index === 1"
-                >+{{ selectedCities.length - 1 }}</span
-              >
-            </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col xs="6" md="4" sm="6">
-          <v-autocomplete
-            label="Tags"
-            :items="tags"
-            v-model="selectedTags"
-            item-title="name"
-            item-value="code"
-            multiple
-            variant="outlined"
-            density="compact"
-            clearable
-            autocomplete="null"
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                v-if="data.index < 1"
-                :key="data.item"
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                class="truncate-chip"
-              >
-                <span class="truncate">{{ data.item.title }}</span>
-              </v-chip>
-              <span v-else-if="data.index === 1"
-                >+{{ selectedTags.length - 1 }}</span
-              >
-            </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col xs="6" md="4" sm="6">
-            <v-menu
-              :close-on-content-click="false"
-              transition="slide-y-transition"
-              class="date-picker-menu"
-              location="bottom"
-              max-width="100"
+    <v-row class="filters-top">
+      <v-col :cols="this.display.width.value <= 600 ? 4 : 3">
+        <v-autocomplete
+          v-model="selectedCountries"
+          label="Country"
+          :items="countries"
+          item-title="name"
+          item-value="code"
+          multiple
+          variant="solo-filled"
+          density="compact"
+          clearable
+          autocomplete="null"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-if="data.index === 0"
+              :key="data.item"
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              class="selected-filter-chip"
+              :style="
+                selectedCountries.length >= 10 && display.width.value <= 400
+                  ? { padding: '0', 'font-size': '8px' }
+                  : display.width.value <= 450
+                  ? { padding: '0' }
+                  : {}
+              "
             >
-              <template #activator="{ props }">
-                <v-autocomplete
-                  v-model="dateRange"
-                  label="Select Date Range"
-                  readonly
-                  v-bind="props"
-                  @click:clear="selectedDate = []"
-                  variant="outlined"
-                  density="compact"
-                  clearable
-                  autocomplete="null"
-                />
-              </template>
-              <v-date-picker
-                v-model="selectedDate"
-                range
-                :first-day-of-week="1"
-                multiple="2"
-                width="100%"
-                class="custom-data-picker"
-              >
-                <template #header>
-                  <v-toolbar class="date-custom-header">
-                    <v-toolbar-title> {{ dateHeaderText }} </v-toolbar-title>
-                  </v-toolbar>
-                </template>
-              </v-date-picker>
-            </v-menu>
-        </v-col>
-      </v-row>
-    </v-card>
+              {{ selectedCountries.length }}
+            </v-chip>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col :cols="this.display.width.value <= 600 ? 4 : 4">
+        <v-autocomplete
+          label="State"
+          :items="computedStates"
+          v-model="selectedStates"
+          item-title="name"
+          item-value="code"
+          multiple
+          variant="solo-filled"
+          density="compact"
+          clearable
+          autocomplete="null"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-if="data.index === 0"
+              :key="data.item"
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              class="selected-filter-chip"
+              :style="
+                selectedStates.length >= 10 && display.width.value <= 400
+                  ? { padding: '0', 'font-size': '8px' }
+                  : display.width.value <= 450
+                  ? { padding: '0' }
+                  : {}
+              "
+            >
+              {{ selectedStates.length }}
+            </v-chip>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col :cols="this.display.width.value <= 600 ? 4 : 3">
+        <v-autocomplete
+          label="City"
+          :items="computedCities"
+          v-model="selectedCities"
+          item-title="name"
+          item-value="code"
+          multiple
+          variant="solo-filled"
+          density="compact"
+          clearable
+          autocomplete="null"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-if="data.index === 0"
+              :key="data.item"
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              class="selected-filter-chip"
+              :style="
+                selectedCities.length >= 10 && display.width.value <= 400
+                  ? { padding: '0', 'font-size': '8px' }
+                  : display.width.value <= 450
+                  ? { padding: '0' }
+                  : {}
+              "
+            >
+              {{ selectedCities.length }}
+            </v-chip>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col
+        v-if="this.display.width.value > 600"
+        cols="3"
+        class="theme-switch-wrapper-top d-flex align-center justify-space-between"
+        :style="{
+          maxWidth: 100 + 'px',
+          position: 'absolute',
+          right: this.display.width.value >= 960 ? 0 : '10px',
+          backgroundColor: theme.current.value.colors.background,
+        }"
+      >
+        <v-icon size="15" class="switch-icons-style"
+          >mdi-white-balance-sunny</v-icon
+        >
+        <v-switch
+          :model-value="isDarkTheme"
+          @update:model-value="toggleTheme"
+          density="compact"
+          class="switch-margin"
+        ></v-switch>
+        <v-icon size="15" class="switch-icons-style">mdi-weather-night</v-icon>
+      </v-col>
+    </v-row>
     <v-progress-circular
       v-if="loading"
       indeterminate
@@ -177,7 +142,7 @@
       <v-container>
         <v-row>
           <template v-for="(item, index) in items" :key="index">
-            <v-col xs="6" sm="4" md="3" lg="2" xl="1">
+            <v-col cols="4" xs="6" sm="4" md="3" lg="2" xl="1" class="img-cols">
               <v-img
                 :lazy-src="
                   item.images[0]?.lazyThumbnailBase64 ||
@@ -187,9 +152,7 @@
                   item.images[0]?.thumbnailUrl || item.original?.thumbnailUrl
                 "
                 cover
-                aspect-ratio="1/1"
-                width="150"
-                height="150"
+                aspect-ratio="1"
                 class="mx-auto"
                 rounded
                 @click="openImageModal(item, index)"
@@ -204,19 +167,129 @@
             </v-col>
           </template>
         </v-row>
+        <div class="bottom-space"></div>
       </v-container>
     </v-infinite-scroll>
+    <v-row justify="center" class="nav-buttons" v-if="viewerModal">
+      <v-btn @click="changeImage(-1)" class="nav-button prev" icon>
+        <v-icon size="20">mdi-chevron-left</v-icon>
+      </v-btn>
+      <v-btn @click="toggleRotation" class="nav-button rotate" icon>
+        <v-icon v-if="isRotated" size="20">mdi-rotate-right</v-icon>
+        <v-icon v-else size="20">mdi-rotate-left</v-icon>
+      </v-btn>
+      <v-btn @click="changeImage(1)" class="nav-button next" icon>
+        <v-icon size="20">mdi-chevron-right</v-icon>
+      </v-btn>
+    </v-row>
+    <v-row class="filters-bottom" :style="{
+        left: this.display.width.value <= 500 ? '15%' : '13.5%',
+        transform: 'translateX(-9%)'
+    }">
+      <v-col :cols="this.display.width.value <= 600 ? 4 : 6">
+        <v-menu
+          :close-on-content-click="false"
+          transition="slide-y-transition"
+          class="date-picker-menu"
+          location="left"
+          max-width="100"
+        >
+          <template #activator="{ props }">
+            <v-autocomplete
+              v-model="dateRange"
+              label="Date"
+              readonly
+              v-bind="props"
+              @click:clear="selectedDate = []"
+              variant="solo-filled"
+              density="compact"
+              clearable
+              autocomplete="null"
+            />
+          </template>
+          <v-date-picker
+            v-model="selectedDate"
+            range
+            :first-day-of-week="1"
+            multiple="2"
+            class="custom-data-picker"
+          >
+            <template #header>
+              <v-toolbar class="date-custom-header">
+                <v-toolbar-title> {{ dateHeaderText }} </v-toolbar-title>
+              </v-toolbar>
+            </template>
+          </v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col :cols="this.display.width.value <= 600 ? 4 : 6">
+        <v-autocomplete
+          label="Tags"
+          :items="tags"
+          v-model="selectedTags"
+          item-title="name"
+          item-value="code"
+          multiple
+          variant="solo-filled"
+          density="compact"
+          clearable
+          autocomplete="null"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-if="data.index === 0"
+              :key="data.item"
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              class="selected-filter-chip"
+              :style="
+                selectedTags.length >= 10 && display.width.value <= 400
+                  ? { padding: '0', 'font-size': '8px' }
+                  : display.width.value <= 450
+                  ? { padding: '0' }
+                  : {}
+              "
+            >
+              {{ selectedTags.length }}
+            </v-chip>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col
+        v-if="this.display.width.value <= 600"
+        cols="4"
+        class="theme-switch-wrapper d-flex align-center justify-space-between"
+        :style="{
+          maxWidth: maxWidthSwitch + 'px',
+          backgroundColor: theme.current.value.colors.background,
+        }"
+      >
+        <v-icon size="15" class="switch-icons-style"
+          >mdi-white-balance-sunny</v-icon
+        >
+        <v-switch
+          :model-value="isDarkTheme"
+          @update:model-value="toggleTheme"
+          density="compact"
+          class="switch-margin"
+        ></v-switch>
+        <v-icon size="15" class="switch-icons-style">mdi-weather-night</v-icon>
+      </v-col>
+    </v-row>
   </v-container>
   <modal-viewer-image
     v-model="viewerModal"
+    :display="display"
     :width="selectedImage?.metadata?.optimizedWidth"
     :height="selectedImage?.metadata?.optimizedHeight"
     :image="selectedImage"
     :cache="cache"
     :version="versionOpen"
+    :is-rotated="isRotated"
+    @version="(version) => (versionOpen = version)"
     @next="changeImage(1)"
     @prev="changeImage(-1)"
-    @version="(version) => (versionOpen = version)"
     @close="
       idOpen = null;
       versionOpen = null;
@@ -227,9 +300,10 @@
 
 <script>
 import _ from "lodash";
-import { useDate } from 'vuetify'
+import { useDate, useDisplay, useTheme } from "vuetify";
 import { ref } from "vue";
 import ModalViewerImage from "@/components/ModalViewerImage.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -281,6 +355,7 @@ export default {
       selectedImage: {},
       indexToDelete: null,
       showDialog: false,
+      isRotated: false,
       deletingImage: false,
       success: false,
       error: false,
@@ -307,11 +382,19 @@ export default {
       loadedFilters: false,
       selectedDate: [],
       dateRange: [],
-      dateVue: useDate()
-
+      dateVue: useDate(),
     };
   },
+  setup() {
+    const display = useDisplay();
+    const theme = useTheme();
+    return { display, theme };
+  },
   computed: {
+    ...mapGetters(["isDarkTheme"]),
+    maxWidthSwitch() {
+      return this.display.width.value / 6 + this.display.width.value / 10;
+    },
     computedCities() {
       return this.cities
         .filter((city) => {
@@ -349,7 +432,7 @@ export default {
       } else {
         return `Selected date range`;
       }
-    }
+    },
   },
   async beforeMount() {
     await this.loadCountries();
@@ -358,21 +441,21 @@ export default {
     await this.loadTags();
     if (this.cityOpen?.length) {
       this.selectedCities = this.cities
-      .filter((city) => this.cityOpen.includes(city.name))
+        .filter((city) => this.cityOpen.includes(city.name))
         .map((city) => city.code);
     }
 
     if (this.stateOpen?.length) {
       this.selectedStates = this.states
-      .filter((state) => this.stateOpen.includes(state.name))
-      .map((state) => state.code);
+        .filter((state) => this.stateOpen.includes(state.name))
+        .map((state) => state.code);
     }
 
     if (this.countryOpen?.length) {
       this.selectedCountries = this.countries
         .filter((country) => this.countryOpen.includes(country.name))
         .map((country) => country.code);
-      }
+    }
 
     if (this.tagOpen?.length) {
       this.selectedTags = this.tags
@@ -381,50 +464,47 @@ export default {
     }
 
     if (this.startDateOpen && !this.endDateOpen) {
-        this.selectedDate = [this.dateVue.parseISO(this.startDateOpen.split('T')[0])];
-      }
+      this.selectedDate = [
+        this.dateVue.parseISO(this.startDateOpen.split("T")[0]),
+      ];
+    }
 
     if (this.startDateOpen && this.endDateOpen) {
       this.selectedDate = [
-        this.dateVue.parseISO(this.startDateOpen.split('T')[0]),
-        this.dateVue.parseISO(this.endDateOpen.split('T')[0]),
+        this.dateVue.parseISO(this.startDateOpen.split("T")[0]),
+        this.dateVue.parseISO(this.endDateOpen.split("T")[0]),
       ];
     }
 
     if (this.endDateOpen && !this.startDateOpen) {
       this.endDateOpen = null;
-      this.updateRoute()
+      this.updateRoute();
     }
 
-      this.loadedFilters = true;
+    this.loadedFilters = true;
   },
   methods: {
+    ...mapActions(["toggleTheme"]),
     async loadImages({ done }) {
-      //console.log(done)
-      console.log("loadImages");
-      console.log("hasMore", this.hasMore);
       if (this.hasMore) {
         this.loading = true;
         try {
-          const response = await this.$api.get(
-            "images",
-            {
-              params: {
-                sort: "createdAt",
-                order: "desc",
-                offset: this.offset,
-                limit: this.perPage,
-                id: this.idOpen,
-                city: this.cityOpen,
-                state: this.stateOpen,
-                country: this.countryOpen,
-                takenAtFrom: this.startDateOpen,
-                takenAtTo: this.endDateOpen,
-                tags: this.tagOpen,
-                // Adicione outros parâmetros de filtro e ordenação conforme necessário
-              },
-            }
-          );
+          const response = await this.$api.get("images", {
+            params: {
+              sort: "createdAt",
+              order: "desc",
+              offset: this.offset,
+              limit: this.perPage,
+              id: this.idOpen,
+              city: this.cityOpen,
+              state: this.stateOpen,
+              country: this.countryOpen,
+              takenAtFrom: this.startDateOpen,
+              takenAtTo: this.endDateOpen,
+              tags: this.tagOpen,
+              // Adicione outros parâmetros de filtro e ordenação conforme necessário
+            },
+          });
           const { images, total } = response.data;
           this.items.push(...images);
           this.totalImages = total;
@@ -462,7 +542,7 @@ export default {
     },
     async loadStates() {
       try {
-        const response = await this.$api.get('states');
+        const response = await this.$api.get("states");
         this.states = response.data;
       } catch (error) {
         console.error("Erro ao carregar estados:", error);
@@ -470,7 +550,7 @@ export default {
     },
     async loadCities() {
       try {
-        const response = await this.$api.get('cities');
+        const response = await this.$api.get("cities");
         this.cities = response.data;
       } catch (error) {
         console.error("Erro ao carregar cidades:", error);
@@ -478,16 +558,16 @@ export default {
     },
     async loadTags() {
       try {
-        console.log('antes de chamar a tag')
         const response = await this.$api.get("tags");
-        console.log('respondeTags', response)
         this.tags = response.data;
       } catch (error) {
         console.error("Erro ao carregar tags:", error);
       }
     },
+    toggleRotation() {
+      this.isRotated = !this.isRotated;
+    },
     openImageModal(item, index, version) {
-      console.log(version);
       this.selectedImage = item;
       this.currentIndex = index;
       this.viewerModal = true;
@@ -497,7 +577,6 @@ export default {
         : "original";
     },
     changeImage(direction) {
-      console.log("changeImage");
       const nextIndex = this.currentIndex + direction;
       if (nextIndex >= 0 && nextIndex < this.items.length) {
         this.selectedImage = this.items[nextIndex];
@@ -540,7 +619,6 @@ export default {
       }
     },
     updateRoute() {
-      console.log("ue");
       this.$router.push({
         name: "gallery",
         query: {
@@ -572,7 +650,6 @@ export default {
       });
     },
     resetImages() {
-      console.log("resetou imagens");
       this.loading = true;
       this.hasMore = true;
       this.items = [];
@@ -581,8 +658,6 @@ export default {
   },
   watch: {
     selectedImage(value) {
-      console.log("recebeu update no selectImage");
-      console.log(value);
       if (value.images || value.original) {
         for (const image of [...value.images, value.original]) {
           if (image) {
@@ -634,7 +709,6 @@ export default {
       this.debounceLoadImages({});
     },
     selectedStates(newValue, oldValue) {
-      console.log("states");
 
       const dontChangeStates =
         oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
@@ -658,20 +732,13 @@ export default {
 
       if (dontChangeStateOpen) return;
 
-      console.log("states passou da validação");
-
       this.updateRoute();
       this.resetImages();
       this.debounceLoadImages({});
     },
     selectedCities(newValue, oldValue) {
-      console.log("cities");
-      console.log(newValue);
-      console.log(oldValue);
-
       const dontChangeSelectedCities =
         oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
-      console.log(dontChangeSelectedCities);
 
       if (dontChangeSelectedCities) return;
 
@@ -685,65 +752,59 @@ export default {
         oldCityOpen.slice().sort().join(",") ===
         this.cityOpen.slice().sort().join(",");
 
-      console.log("cityOpen", this.cityOpen);
-      console.log("oldCityOpen", oldCityOpen);
-      console.log(dontChangeCityOpen);
-
       if (dontChangeCityOpen) return;
 
-      console.log("passou validações city");
-
-      //console.log(this.cityOpen)
       this.updateRoute();
       this.resetImages();
-      console.log("antes do load no city");
       this.debounceLoadImages({});
     },
     selectedDate(newValue, oldValue) {
-      console.log('newValue', newValue[0])
-      console.log('oldValue', oldValue)
-      console.log(this.endDateOpen)
 
-      const dontChangeSelectedDates = oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
+      const dontChangeSelectedDates =
+        oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
 
       if (dontChangeSelectedDates) return;
 
-      const [startDate, endDate] = newValue.sort((a, b) => a.getTime() - b.getTime());
+      const [startDate, endDate] = newValue.sort(
+        (a, b) => a.getTime() - b.getTime()
+      );
 
-      const oldStartDateOpen = this.startDateOpen
-      const oldendDateOpen = this.endDateOpen
+      const oldStartDateOpen = this.startDateOpen;
+      const oldendDateOpen = this.endDateOpen;
 
       if (newValue.length === 1) {
-        const startDayAndMonth = this.dateVue.format(startDate, 'shortDate');
-        const startyear = this.dateVue.format(startDate, 'year');
+        const startDayAndMonth = this.dateVue.format(startDate, "shortDate");
+        const startyear = this.dateVue.format(startDate, "year");
         this.dateRange = `${startDayAndMonth} ${startyear}`;
-        this.startDateOpen = this.dateVue.toISO(startDate) + 'T00:00:00.000';
+        this.startDateOpen = this.dateVue.toISO(startDate) + "T00:00:00.000";
         this.endDateOpen = null;
         if (!oldValue.length && oldStartDateOpen === this.startDateOpen) return;
       } else if (newValue.length === 2) {
-        const startDayAndMonth = this.dateVue.format(startDate, 'shortDate');
-        const startyear = this.dateVue.format(startDate, 'year');
-        const endDayAndMonth = this.dateVue.format(endDate, 'shortDate');
-        const endyear = this.dateVue.format(endDate, 'year');
+        const startDayAndMonth = this.dateVue.format(startDate, "shortDate");
+        const startyear = this.dateVue.format(startDate, "year");
+        const endDayAndMonth = this.dateVue.format(endDate, "shortDate");
+        const endyear = this.dateVue.format(endDate, "year");
         this.dateRange = `${startDayAndMonth} ${startyear} - ${endDayAndMonth} ${endyear}`;
-        this.startDateOpen = this.dateVue.toISO(startDate) + 'T00:00:00.000';
-        this.endDateOpen = this.dateVue.toISO(endDate) + 'T00:00:00.000';
-        if (oldStartDateOpen === this.startDateOpen && oldendDateOpen === this.endDateOpen) return;
+        this.startDateOpen = this.dateVue.toISO(startDate) + "T00:00:00.000";
+        this.endDateOpen = this.dateVue.toISO(endDate) + "T00:00:00.000";
+        if (
+          oldStartDateOpen === this.startDateOpen &&
+          oldendDateOpen === this.endDateOpen
+        )
+          return;
       } else {
-        this.dateRange = '';
+        this.dateRange = "";
         this.startDateOpen = null;
         this.endDateOpen = null;
       }
 
-      console.log('vai chamar as coisas do date')
       this.updateRoute();
       this.resetImages();
       this.debounceLoadImages({});
     },
     selectedTags(newValue, oldValue) {
-      console.log('tagsOld', oldValue)
-      console.log('tagsNew', newValue)
-      const dontChangeTags = oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
+      const dontChangeTags =
+        oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
 
       if (dontChangeTags) return;
 
@@ -753,10 +814,11 @@ export default {
         (tagCode) => this.tags.find((t) => t.code === tagCode).name
       );
 
-      const dontChangeTagOpen = oldTagsOpen.slice().sort().join(",") === this.tagOpen.slice().sort().join(",");
+      const dontChangeTagOpen =
+        oldTagsOpen.slice().sort().join(",") ===
+        this.tagOpen.slice().sort().join(",");
 
       if (dontChangeTagOpen) return;
-      console.log('passou da validação de tagas')
 
       this.updateRoute();
       this.resetImages();
@@ -768,6 +830,9 @@ export default {
 };
 </script>
 <style scoped>
+.bottom-space {
+  height: 70px;
+}
 .v-progress-circular {
   position: absolute;
   top: 50%;
@@ -775,19 +840,16 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-.truncate-chip .truncate {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
 .v-infinite-scroll {
   overflow: hidden;
 }
 
-::deep .v-picker-title {
+:deep(.v-picker-title) {
   display: none;
+}
+
+.selected-filter-chip {
+  top: -8px;
 }
 
 .date-custom-header {
@@ -796,5 +858,108 @@ export default {
 
 .custom-data-picker {
   margin-top: -22px;
+}
+
+:deep(.v-autocomplete .v-label) {
+  font-size: 12px;
+  transform: translateY(-11px);
+}
+
+:deep(.v-autocomplete__menu-icon) {
+  display: none;
+}
+
+:deep(.v-field) {
+  border-radius: 100px !important;
+}
+
+.filters-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.filters-bottom {
+  position: fixed;
+  bottom: -5px;
+  z-index: 100;
+  width: 90vw;
+}
+
+.nav-buttons::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.nav-buttons {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-43%);
+  bottom: 14px;
+  width: auto; /* ou uma largura específica se necessário */
+  z-index: 9999;
+}
+
+.v-img {
+  box-shadow: 4px 10px 5px rgba(0, 0, 0, 0.4); /* Sombra leve para um look suave */
+  border-radius: 8px; /* Bordas arredondadas */
+  transition: transform 0.3s ease-in-out;
+}
+
+.v-img:hover {
+  transform: scale(1.05); /* Aumenta levemente a imagem */
+  filter: brightness(var(--v-theme-darken-hover));
+}
+
+.v-img:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Overlay claro para modo escuro */
+}
+
+.v-container {
+  padding: 10px;
+}
+
+.img-cols {
+  padding: 8px;
+}
+
+.switch-margin {
+  margin-top: 21px; /* Centraliza verticalmente */
+}
+
+.switch-icons-style {
+  margin-top: 0px; /* Centraliza verticalmente */
+}
+
+.theme-switch-wrapper {
+  border-radius: 100px; /* Bordas arredondadas para imitar campos de entrada */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra opcional para profundidade */
+  height: 40px; /* Altura específica para alinhar com v-autocomplete */
+  display: flex;
+  margin-top: 11px;
+  padding: 5px;
+  margin-left: 10px;
+}
+
+.theme-switch-wrapper-top {
+  border-radius: 100px; /* Bordas arredondadas para imitar campos de entrada */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra opcional para profundidade */
+  height: 40px; /* Altura específica para alinhar com v-autocomplete */
+  display: flex;
+  margin-top: 13px;
+  padding: 5px;
+  margin-left: 10px;
 }
 </style>

@@ -6,11 +6,12 @@
     v-if="image.original || image.images"
   >
     <v-card
-      style="overflow: visible"
+      style="overflow: visible; background-color: transparent"
       @mouseover="toggleHoverExpansionPanel"
       @mouseleave="toggleHoverExpansionPanel"
-      @touchstart="toggleHoverExpansionPanel"
       @touchend="toggleHoverExpansionPanel"
+      @touchmove="toggleHoverExpansionPanel"
+      :class="{ rotated: isRotated }"
     >
       <v-carousel
         :height="size.height"
@@ -28,13 +29,13 @@
           cover
           :src="cache[item?._id]"
         >
-        <template v-slot:placeholder
-                  ><v-progress-circular
-                    indeterminate
-                    color="primary"
-                    size="128"
-                  ></v-progress-circular
-                ></template>
+          <template v-slot:placeholder
+            ><v-progress-circular
+              indeterminate
+              color="primary"
+              size="128"
+            ></v-progress-circular
+          ></template>
         </v-carousel-item>
         <div
           class="no-edit-checkbox"
@@ -72,17 +73,17 @@
           v-model="panelExpanded"
           v-if="expandedPanelVisible"
         >
-          <v-expansion-panel class="expansion-box">
+          <v-expansion-panel class="expansion-box" :style="{'max-height': heightEightyPercent}">
             <v-expansion-panel-title
               readonly
               hide-actions
               class="expansion-title"
-              @click.stop="toggleExpansionPanel"
+              @click="toggleExpansionPanel"
             >
-              <v-row justify="space-between" id="rowPanelTitle">
-                <v-col cols="5" style="font-size: 12px">
+              <v-row justify="space-between">
+                <v-col cols="10">
                   <v-row>
-                    <div class="div-location-button" @click.stop="(event)=>{event.stopPropagation();console.log('veio')}" >
+                    <div class="div-location-button">
                       <v-menu location="top">
                         <template v-slot:activator="{ props }">
                           <v-btn
@@ -106,10 +107,9 @@
                           <v-btn
                             class="location-button"
                             size="x-small"
-                            density="comfortable"
+                            density="compact"
                             v-bind="props"
                             icon="mdi-plus"
-                            @click.stop="(event)=>{event.stopPropagation();console.log('veio')}"
                             ref="location-button-plus"
                             id="location-button-plus"
                           >
@@ -121,7 +121,9 @@
                         >
                           <div @click.stop class="location-full">
                             <span
-                              >{{ image.country }}{{ image.state ? ', ' + image.state : '' }}{{ image.city ? ', ' + image.city : '' }}</span
+                              >{{ image.country
+                              }}{{ image.state ? ", " + image.state : ""
+                              }}{{ image.city ? ", " + image.city : "" }}</span
                             >
                           </div>
                           <v-list-item
@@ -129,7 +131,6 @@
                             class="location-menu"
                             :href="`https://www.google.com/maps?q=${image.metadata.latitude},${image.metadata.longitude}`"
                             target="_blank"
-                            @click.stop
                           >
                             <v-row>
                               <v-col cols="3">
@@ -173,13 +174,14 @@
                             density="comfortable"
                             v-bind="props"
                             id="datetime-photographed"
+                            style="max-width: 82%; overflow: hidden"
                           >
                             {{ getDateHour(image.metadata.takenAt) }}
                           </v-btn>
                           <v-btn
                             class="datetime-button"
                             size="x-small"
-                            density="comfortable"
+                            density="compact"
                             v-bind="props"
                             icon="mdi-plus"
                           >
@@ -219,7 +221,7 @@
                     </div>
                   </v-row>
                 </v-col>
-                <v-col cols="2" class="text-right">
+                <v-col cols="2" class="d-flex justify-end arrow-expand-panel">
                   <v-btn
                     size="small"
                     :icon="
@@ -260,15 +262,62 @@
                   color="white"
                   density="compact"
                 >
-                  <v-tab :value="1">Desc</v-tab>
-                  <v-tab :value="2">Tags</v-tab>
+                  <v-row justify="center">
+                    <v-col :cols="image.description ? 4 : 6">
+                      <v-tab :value="1"
+                        ><v-icon>mdi-cog-outline</v-icon>
+                      </v-tab>
+                    </v-col>
+                    <v-col cols="4" v-if="image.description">
+                      <v-tab :value="2"
+                        ><v-icon>mdi-text-box-outline</v-icon>
+                      </v-tab>
+                    </v-col>
+                    <v-col :cols="image.description ? 4 : 6">
+                      <v-tab :value="3"
+                        ><v-icon>mdi-tag-multiple</v-icon>
+                      </v-tab>
+                    </v-col>
+                  </v-row>
                 </v-tabs>
-                <v-card-text class="text-description-tags">
+                <v-card-text :style = "{'max-height': heightThirtyPercent, 'overflow-y': 'auto'}" class="text-specs-description-tags">
                   <v-tabs-window v-model="tab">
                     <v-tabs-window-item :value="1">
+                      <v-row>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon> $custom-camera </v-icon>
+                          {{ image.metadata.camera }}
+                        </v-col>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon> $custom-lens </v-icon>
+                          {{ image.metadata.lens.substring(0, 18) }}
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon>$custom-shutter-speed</v-icon>
+                          {{ image.metadata.shutterSpeed }}
+                        </v-col>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon>$custom-aperture</v-icon>
+                          {{ image.metadata.aperture }}
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon> $custom-iso </v-icon>
+                          {{ image.metadata.iso }}
+                        </v-col>
+                        <v-col class="d-flex justify-space-between">
+                          <v-icon> $custom-white-balance </v-icon>
+                          {{ image.metadata.whiteBalance }}
+                        </v-col>
+                      </v-row>
+                    </v-tabs-window-item>
+                    <v-tabs-window-item :value="2" v-if="image.description">
                       {{ image.description }}
                     </v-tabs-window-item>
-                    <v-tabs-window-item :value="2">
+                    <v-tabs-window-item :value="3">
                       <v-chip-group selected-class="text-primary" column>
                         <v-chip v-for="tag in image.tags" :key="tag">
                           {{ tag }}
@@ -278,80 +327,12 @@
                   </v-tabs-window>
                 </v-card-text>
               </v-card>
-              <v-card class="card-configs">
-                <v-container>
-                  <v-row>
-                    <v-col cols="1">
-                      <v-icon> $custom-camera </v-icon>
-                    </v-col>
-                    <v-col class="text-configs">
-                      {{ image.metadata.camera }}
-                    </v-col>
-                    <v-col cols="1">
-                      <v-icon> $custom-lens </v-icon>
-                    </v-col>
-                    <v-col class="text-configs">
-                      {{ image.metadata.lens.substring(0, 18) }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="1">
-                      <v-icon>$custom-shutter-speed</v-icon>
-                    </v-col>
-                    <v-col cols="5" class="text-configs">
-                      {{ image.metadata.shutterSpeed }}
-                    </v-col>
-                    <v-col cols="1">
-                      <v-icon color="white" size="small"
-                        >$custom-aperture</v-icon
-                      >
-                    </v-col>
-                    <v-col cols="5" class="text-configs">
-                      {{ image.metadata.aperture }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="1">
-                      <v-icon> $custom-iso </v-icon>
-                    </v-col>
-                    <v-col class="text-configs">
-                      {{ image.metadata.iso }}
-                    </v-col>
-                    <v-col cols="1">
-                      <v-icon> $custom-white-balance </v-icon>
-                    </v-col>
-                    <v-col class="text-configs">
-                      {{ image.metadata.whiteBalance.substring(0, 10) }}
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-carousel>
-      <v-btn
-        @click="previousImage"
-        class="nav-button prev"
-        icon
-        :style="{ height: size.height, borderRadius: 0 }"
-      >
-        <v-icon size="20" style="transform: scaleY(10) scaleX(3)"
-          >mdi-chevron-left</v-icon
-        >
-      </v-btn>
-      <v-btn
-        @click="nextImage"
-        class="nav-button next"
-        icon
-        :style="{ height: size.height, borderRadius: 0 }"
-      >
-        <v-icon size="20" style="transform: scaleY(10) scaleX(3)"
-          >mdi-chevron-right</v-icon
-        >
-      </v-btn>
     </v-card>
-    <v-snackbar class="v-snackbar" v-model="toastInfo" top>{{
+    <v-snackbar class="v-snackbar" v-model="toastInfo" location="top">{{
       toastMessage
     }}</v-snackbar>
   </v-dialog>
@@ -359,8 +340,7 @@
 
 <script>
 import { getDateHour } from "@/utils/date";
-import { nextTick } from 'vue';
-
+import { nextTick } from "vue";
 
 export default {
   props: {
@@ -368,7 +348,9 @@ export default {
     width: Number,
     height: Number,
     cache: Object,
-    version: String
+    version: String,
+    display: Object,
+    isRotated: Boolean,
   },
   data() {
     return {
@@ -381,14 +363,56 @@ export default {
       toastInfo: false,
       toastMessage: "",
       delimiterPosition: "0px",
+      touchInProgress: false,
+      touchStartX: null,
+      touchEndX: 0,
+      threshold: 10,
     };
   },
   computed: {
     size() {
-      const proportion = this.width / this.height;
-      const screenWidth = window.innerWidth - 100;
-      const screenHeight = window.innerHeight - 100;
+      let proportion = this.width / this.height;
+      //const originalProportion = this.width / this.height;
+      const screenWidth = this.display.width.value - 100;
+      const screenHeight = this.display.height.value - 100;
       const screenProportion = screenWidth / screenHeight;
+
+      if (this.isRotated) {
+        proportion = this.height / this.width;
+
+        if (proportion > screenProportion) {
+          if (proportion < 1) {
+            return {
+              width: screenHeight * proportion + "px",
+              height: screenWidth * proportion + "px",
+            };
+          } else {
+            return {
+              width:
+                (screenHeight < screenWidth ? screenHeight : screenWidth) /
+                  proportion +
+                "px",
+              height:
+                screenWidth > screenHeight ? screenHeight : screenWidth + "px",
+            };
+          }
+        } else {
+          if (proportion > 1) {
+            return {
+              width: screenHeight / proportion + "px",
+              height: screenWidth / screenProportion + "px",
+            };
+          } else {
+            return {
+              width: screenHeight + "px",
+              height:
+                (screenProportion > 1 ? screenHeight : screenWidth) *
+                  proportion +
+                "px",
+            };
+          }
+        }
+      }
 
       if (proportion > screenProportion) {
         return {
@@ -402,10 +426,18 @@ export default {
         };
       }
     },
+    heightEightyPercent() {
+      return this.size.height.slice(0,-2) * 0.8 + "px";
+    },
+    heightThirtyPercent() {
+      return this.size.height.slice(0,-2) * 0.3 + "px";
+    },
     fullLocationText() {
       return `${this.image.country}
-      ${this.image.state ? `, ${this.image.state}`: ''}
-      ${this.image.city ? `, ${this.image.city}`: ''}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`;
+      ${this.image.state ? `, ${this.image.state}` : ""}
+      ${
+        this.image.city ? `, ${this.image.city}` : ""
+      }\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`;
     },
     onlyOriginal() {
       return !this.image.images?.length && !!this.image.original;
@@ -429,7 +461,7 @@ export default {
       } else if (event.key === "ArrowRight") {
         this.nextImage();
       } else if (event.key === "Escape") {
-        this.closeImage()
+        this.closeImage();
       }
     },
     nextImage() {
@@ -438,37 +470,64 @@ export default {
     previousImage() {
       this.$emit("prev");
     },
-    closeImage(){
-      this.noEditedVersion = this.onlyOriginal ? true : false
+    closeImage() {
+      this.noEditedVersion = this.onlyOriginal ? true : false;
       this.activeIndex = 0;
-      const teste = this.$emit("close");
-      console.log(teste)
+      this.$emit("close");
     },
     async copyColorCode(color) {
-      await navigator.clipboard.writeText(color);
+      const toHex = c => {
+    const hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  };
 
-      this.toastMessage = "Código de cor copiado com sucesso: " + color;
+    const hexColor =  "#" + toHex(color.red) + toHex(color.green) + toHex(color.blue);
+      await navigator.clipboard.writeText(hexColor);
+
+      this.toastMessage = "color code copied successfully: " + hexColor;
       this.toastInfo = true;
     },
     async toggleHoverExpansionPanel(event) {
-      console.log(event)
       if (
         event.type === "mouseleave" &&
         event.relatedTarget?.className === "v-overlay__scrim"
       ) {
         this.expandedPanelVisible = false;
-      } else if (event.type === "mouseover") {
+      } else if (event.type === "mouseover" && !this.touchInProgress) {
         this.expandedPanelVisible = true;
-      } else if (event.type === "touchend" && event.target.className === 'v-img__img v-img__img--cover') {
-        console.log('veio no lugar que devia ocultar')
+      } else if (
+        event.type === "touchend" &&
+        event.target.className === "v-img__img v-img__img--cover"
+      ) {
+        if (this.touchStartX !== null) {
+          const direction = this.touchStartX - this.touchEndX;
+          if (Math.abs(direction) > this.threshold) {
+            if (direction > 0) {
+              this.nextImage();
+            } else {
+              this.previousImage();
+            }
+          }
+          this.touchStartX = null; // Reseta para a próxima interação
+          return;
+        }
+
+        this.touchInProgress = true;
         await nextTick();
         this.expandedPanelVisible = !this.expandedPanelVisible;
+        setTimeout(() => {
+          this.touchInProgress = false;
+        }, 300);
+      } else if (event.type === "touchmove") {
+        if (this.touchStartX === null) {
+          this.touchStartX = event.touches[0].clientX;
+        }
+        this.touchEndX = event.touches[0].clientX;
       }
     },
-    toggleExpansionPanel(event) {
-      event.stopPropagation();
+    toggleExpansionPanel() {
       this.panelExpanded = this.panelExpanded === null ? 0 : null;
-    }
+    },
   },
   watch: {
     onlyOriginal(newValue) {
@@ -477,40 +536,59 @@ export default {
       }
     },
     activeIndex(newValue) {
-      this.$emit("version", this.onlyOriginal ? 'original' : String(newValue + 1));
+      this.$emit(
+        "version",
+        this.onlyOriginal ? "original" : String(newValue + 1)
+      );
     },
-    noEditedVersion(newValue){
+    noEditedVersion(newValue) {
       if (newValue) {
         this.$emit("version", "original");
       } else {
         this.$emit("version", String(this.activeIndex + 1));
       }
     },
-    image(value){
+    image(value) {
       this.activeIndex = Number(this.version) - 1;
-      this.noEditedVersion = this.version === 'original' || !value.images?.length ? true : false;
-    }
+      this.noEditedVersion =
+        this.version === "original" || !value.images?.length ? true : false;
+    },
   },
 };
 </script>
 
 <style scoped>
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+:deep(.v-overlay__content) {
+  pointer-events: none;
+}
+
+:deep(.v-overlay__content > .v-card) {
+  pointer-events: auto; /* Aplica a propriedade a todos os elementos dentro de .v-card */
+}
+
+:deep(.v-overlay__content > #location-menu) {
+  pointer-events: auto !important;
+}
+
+:deep(.v-overlay__content > #datetime-menu) {
+  pointer-events: auto !important;
+}
+
+.rotated {
+  transform: rotate(90deg);
+  transform-origin: center center; /* Garante que a rotação ocorra em torno do centro */
+  height: 100%;
+  width: 100%;
 }
 
 .prev {
   left: -45px;
-  background-color: transparent;
   color: white;
   transition: background-color 0.3s ease;
 }
 
 .next {
   right: -45px;
-  background-color: transparent;
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -531,12 +609,12 @@ export default {
 
 .color-palette {
   display: flex;
-  margin: 10px;
+  margin: 0px;
 }
 
 .color-box {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   border: none;
   cursor: pointer;
 }
@@ -556,16 +634,36 @@ export default {
   max-height: 30px;
 }
 
+.arrow-expand-panel {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.v-tab.v-tab.v-btn {
+  min-width: 50px;
+}
+
+:deep(.v-slide-group__container) {
+  display: ruby;
+  text-align: center;
+}
+
+.v-expansion-panel--active
+  > .v-expansion-panel-title:not(.v-expansion-panel-title--static) {
+  min-height: 40px;
+}
+
+:deep(.v-expansion-panel-text__wrapper) {
+  padding: 0 !important;
+  overflow-y: auto; /* Assegura rolagem vertical */
+}
+
 .custom-delimiters {
   position: absolute;
   top: 7px;
   left: 0;
   margin: 4px;
   color: rgba(255, 255, 255, 0.3);
-}
-
-.card-configs {
-  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .text-configs {
@@ -577,18 +675,13 @@ export default {
   color: #c5c5c5;
 }
 
-.text-description-tags {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.text-description-tags::-webkit-scrollbar {
+.text-specs-description-tags::-webkit-scrollbar {
   width: 12px;
   /* Largura da barra de rolagem */
 }
 
 /* Estilo para a alça da barra de rolagem */
-.text-description-tags::-webkit-scrollbar-thumb {
+.text-specs-description-tags::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.9);
   /* Cor da alça */
   border-radius: 6px;
@@ -596,13 +689,13 @@ export default {
 }
 
 /* Estilo para a pista da barra de rolagem */
-.text-description-tags::-webkit-scrollbar-track {
+.text-specs-description-tags::-webkit-scrollbar-track {
   background-color: rgba(255, 255, 255, 0.1);
   /* Cor de fundo da pista */
 }
 
 /* Estilo para o canto da barra de rolagem */
-.text-description-tags::-webkit-scrollbar-corner {
+.text-specs-description-tags::-webkit-scrollbar-corner {
   background-color: transparent;
   /* Cor de fundo do canto */
 }
@@ -617,7 +710,6 @@ export default {
   color: white;
   background-color: rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .location-menu,
@@ -633,7 +725,7 @@ export default {
 }
 
 .datetime-photographed {
-  margin-left: 20px;
+  margin-left: 0px;
 }
 
 .div-location-button {

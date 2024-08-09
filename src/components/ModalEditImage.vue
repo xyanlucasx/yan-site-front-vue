@@ -212,7 +212,6 @@ export default {
       setTimeout(() => {
         this.highlightedField = false;
       }, 1000);
-      console.log(index);
     },
     addChip() {
       if (this.newChip.trim() !== "") {
@@ -221,7 +220,6 @@ export default {
       }
     },
     removeChip(index) {
-      console.log(index);
       this.editedImage.tags.splice(index, 1);
     },
   },
