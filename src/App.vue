@@ -33,6 +33,7 @@ export default {
   },
   beforeMount() {
     this.theme.global.name = this.isDarkTheme ? 'dark' : 'light'
+    document.title = 'Yan Lucas | Gallery'
   },
   watch: {
     isDarkTheme(value) {
