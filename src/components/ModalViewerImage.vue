@@ -131,6 +131,10 @@
                             class="location-menu"
                             :href="`https://www.google.com/maps?q=${image.metadata.latitude},${image.metadata.longitude}`"
                             target="_blank"
+                            v-if="(
+                              image.metadata.latitude &&
+                              image.metadata.longitude
+                            )"
                           >
                             <v-row>
                               <v-col cols="3">
@@ -148,6 +152,10 @@
                             class="location-menu"
                             :href="`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${image.metadata.latitude},${image.metadata.longitude}&heading=${image.metadata.cameraTrueDirection}&pitch=0&fov=90`"
                             target="_blank"
+                            v-if="(
+                              image.metadata.latitude &&
+                              image.metadata.longitude
+                            )"
                           >
                             <v-row>
                               <v-col cols="3">

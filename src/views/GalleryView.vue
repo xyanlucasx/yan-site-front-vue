@@ -491,7 +491,7 @@ export default {
         try {
           const response = await this.$api.get("images", {
             params: {
-              sort: "createdAt",
+              sort: "metadata.takenAt",
               order: "desc",
               offset: this.offset,
               limit: this.perPage,
@@ -501,8 +501,7 @@ export default {
               country: this.countryOpen,
               takenAtFrom: this.startDateOpen,
               takenAtTo: this.endDateOpen,
-              tags: this.tagOpen,
-              // Adicione outros parâmetros de filtro e ordenação conforme necessário
+              tags: this.tagOpen
             },
           });
           const { images, total } = response.data;
