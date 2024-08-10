@@ -374,7 +374,7 @@ export default {
       touchInProgress: false,
       touchStartX: null,
       touchEndX: 0,
-      threshold: 10,
+      threshold: 40,
     };
   },
   computed: {
@@ -526,7 +526,8 @@ export default {
         setTimeout(() => {
           this.touchInProgress = false;
         }, 300);
-      } else if (event.type === "touchmove") {
+      } else if (event.type === "touchmove" && event.touches.length === 1) {
+        console.log(event)
         if (this.touchStartX === null) {
           this.touchStartX = event.touches[0].clientX;
         }
