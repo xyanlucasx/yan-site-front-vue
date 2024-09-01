@@ -53,11 +53,11 @@
               v-model="newChip"
               label="Adicionar ou remover tags"
               @keydown.enter="addChip"
-              @keydown.backspace="removeChip(editedImage.tags.length - 1)"
+              @keydown.backspace=" !newChip && removeChip(editedImage.tags.length - 1)"
             >
               <v-chip
                 v-for="(chip, index) in editedImage.tags"
-                :key="index"
+                :key="index + chip"
                 closable
                 @click:close="removeChip(index)"
               >
