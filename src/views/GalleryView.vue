@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container @keydown="closeImageModal()">
     <v-row class="filters-top">
       <v-col :cols="this.display.width.value <= 600 ? 4 : 3">
         <v-autocomplete
@@ -171,14 +171,14 @@
       </v-container>
     </v-infinite-scroll>
     <v-row justify="center" class="nav-buttons" v-if="viewerModal">
-      <v-btn @click="changeImage(-1)" class="nav-button prev" icon>
+      <v-btn @click="changeImage(-1)" class="nav-button prev" icon :loading="loadingModalImage">
         <v-icon size="20">mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn @click="toggleRotation" class="nav-button rotate" icon>
+      <v-btn @click="toggleRotation" class="nav-button rotate" icon :loading="loadingModalImage">
         <v-icon v-if="isRotated" size="20">mdi-rotate-right</v-icon>
         <v-icon v-else size="20">mdi-rotate-left</v-icon>
       </v-btn>
-      <v-btn @click="changeImage(1)" class="nav-button next" icon>
+      <v-btn @click="changeImage(1)" class="nav-button next" icon :loading="loadingModalImage">
         <v-icon size="20">mdi-chevron-right</v-icon>
       </v-btn>
     </v-row>
@@ -290,10 +290,8 @@
     @version="(version) => (versionOpen = version)"
     @next="changeImage(1)"
     @prev="changeImage(-1)"
-    @close="
-      idOpen = null;
-      versionOpen = null;
-    "
+    @close="closeImageModal()"
+    @finishLoadgImage="loadingModalImage = false"
   />
   <v-snackbar v-model="error" color="error" top>{{ errorMessage }}</v-snackbar>
 </template>
@@ -347,6 +345,7 @@ export default {
     return {
       items: ref([]),
       loading: false,
+      loadingModalImage: false,
       hasMore: true,
       totalImages: 0,
       perPage: 30,
@@ -485,7 +484,12 @@ export default {
   },
   methods: {
     ...mapActions(["toggleTheme"]),
-    async loadImages({ done }) {
+    handleKeyDown(event) {
+      if (event.key === "Escape") {
+        this.closeImage();
+      }
+    },
+    async loadImages({ done }, preloadNextPage) {
       if (this.hasMore) {
         this.loading = true;
         try {
@@ -495,7 +499,7 @@ export default {
               order: "desc",
               offset: this.offset,
               limit: this.perPage,
-              id: this.idOpen,
+              ...(!preloadNextPage && {id: this.idOpen}),
               city: this.cityOpen,
               state: this.stateOpen,
               country: this.countryOpen,
@@ -507,8 +511,8 @@ export default {
           const { images, total } = response.data;
           this.items.push(...images);
           this.totalImages = total;
-          this.hasMore = this.offset + this.perPage < total;
-          this.offset += this.perPage;
+          this.hasMore = this.items.length < total;
+          this.offset = this.items.length;
           if (this.idOpen) {
             this.openImageModal(
               this.items.find((item) => item._id === this.idOpen),
@@ -567,6 +571,7 @@ export default {
       this.isRotated = !this.isRotated;
     },
     openImageModal(item, index, version) {
+      this.loadingModalImage = true;
       this.selectedImage = item;
       this.currentIndex = index;
       this.viewerModal = true;
@@ -576,25 +581,27 @@ export default {
         : "original";
     },
     changeImage(direction) {
+      if (this.loadingModalImage) return;
       const nextIndex = this.currentIndex + direction;
-      if (nextIndex >= 0 && nextIndex < this.items.length) {
+      if (nextIndex >= 0 && nextIndex >= (this.items.length - 3) && nextIndex < this.items.length) {
+        this.loadingModalImage = true;
+        this.loadImages({}, true);
         this.selectedImage = this.items[nextIndex];
         this.currentIndex = nextIndex;
         this.idOpen = this.selectedImage._id;
         this.versionOpen = this.selectedImage.images?.length ? "1" : "original";
-      } else if (nextIndex >= 0 && nextIndex >= this.items.length) {
-        this.loadImages({
-          done: (status) => {
-            if (status === "empty") return false;
-            this.selectedImage = this.items[nextIndex];
-            this.currentIndex = nextIndex;
-            this.idOpen = this.selectedImage._id;
-            this.versionOpen = this.selectedImage.images?.length
-              ? "1"
-              : "original";
-          },
-        });
+      } else if (nextIndex >= 0 && nextIndex < this.items.length) {
+        this.loadingModalImage = true;
+        this.selectedImage = this.items[nextIndex];
+        this.currentIndex = nextIndex;
+        this.idOpen = this.selectedImage._id;
+        this.versionOpen = this.selectedImage.images?.length ? "1" : "original";
       }
+    },
+    closeImageModal() {
+      this.idOpen = null;
+      this.versionOpen = null;
+      this.loadingModalImage = false;
     },
     async populateCache({ id, url }) {
       try {
