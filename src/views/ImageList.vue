@@ -1,37 +1,5 @@
 <template>
   <v-container>
-    <v-card class="header">
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            v-model="searchTags"
-            label="Tags"
-            outlined
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-container>
-        <v-row no-gutters justify="center">
-          <v-col cols="2" sm="2">
-            <div>Prévia</div>
-          </v-col>
-          <v-col cols="3" sm="3">
-            <div>Local</div>
-          </v-col>
-          <v-col cols="3" sm="3">
-            <div>Fotografada</div>
-          </v-col>
-          <v-col cols="3" sm="3">
-            <div>Upload</div>
-          </v-col>
-          <v-col cols="1" sm="1">
-            <div>Excluir</div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
     <v-infinite-scroll
       :items="items"
       :onLoad="loadImages"
@@ -231,10 +199,7 @@ export default {
       this.offset = 0;
       this.loadImages();
     },
-  },
-  mounted() {
-    this.loadImages({});
-  },
+  }
 };
 </script>
 <style scoped>
@@ -283,11 +248,6 @@ export default {
   padding: 8px 16px;
   background-color: white;
   z-index: 2;
-}
-
-.scrollable-list {
-  overflow-y: auto;
-  max-height: 75vh;
 }
 
 .dialog-overlay {
