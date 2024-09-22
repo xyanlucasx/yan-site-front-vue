@@ -544,8 +544,9 @@ export default {
           if (done) done("ok");
         } catch (error) {
           this.error = true;
-          (this.errorMessage = "Image not found"),
-            console.error("Image not found:", error);
+          this.errorMessage = "Image not found";
+          console.error("Image not found:", error);
+          window.location.assign('/gallery');
         } finally {
           this.loading = false;
         }
