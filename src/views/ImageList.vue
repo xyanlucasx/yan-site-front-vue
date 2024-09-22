@@ -113,7 +113,7 @@ export default {
       loading: false,
       hasMore: true,
       totalImages: 0,
-      perPage: 10,
+      perPage: 50,
       offset: 0,
       imageModal: false,
       selectedImage: {},
