@@ -126,13 +126,6 @@
         <v-icon size="15" class="switch-icons-style">mdi-weather-night</v-icon>
       </v-col>
     </v-row>
-    <v-progress-circular
-      v-if="loading"
-      indeterminate
-      color="green"
-      size="128"
-      width="8"
-    ></v-progress-circular>
     <v-infinite-scroll
       v-if="loadedFilters"
       :items="items"
@@ -159,6 +152,7 @@
               >
                 <template v-slot:placeholder
                   ><v-progress-circular
+                    class="load-inside-img"
                     indeterminate
                     color="primary"
                   ></v-progress-circular
@@ -167,25 +161,52 @@
             </v-col>
           </template>
         </v-row>
-        <div class="bottom-space"></div>
       </v-container>
+      <template #loading>
+  <div class="bottom-space">
+    <v-progress-circular
+      indeterminate
+      color="green"
+      size="50"
+    ></v-progress-circular>
+  </div>
+</template>
     </v-infinite-scroll>
     <v-row justify="center" class="nav-buttons" v-if="viewerModal">
-      <v-btn @click="changeImage(-1)" class="nav-button prev" icon :loading="loadingModalImage">
+      <v-btn
+        @click="changeImage(-1)"
+        class="nav-button prev"
+        icon
+        :loading="loadingModalImage"
+      >
         <v-icon size="20">mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn @click="toggleRotation" class="nav-button rotate" icon :loading="loadingModalImage">
+      <v-btn
+        @click="toggleRotation"
+        class="nav-button rotate"
+        icon
+        :loading="loadingModalImage"
+      >
         <v-icon v-if="isRotated" size="20">mdi-rotate-right</v-icon>
         <v-icon v-else size="20">mdi-rotate-left</v-icon>
       </v-btn>
-      <v-btn @click="changeImage(1)" class="nav-button next" icon :loading="loadingModalImage">
+      <v-btn
+        @click="changeImage(1)"
+        class="nav-button next"
+        icon
+        :loading="loadingModalImage"
+      >
         <v-icon size="20">mdi-chevron-right</v-icon>
       </v-btn>
     </v-row>
-    <v-row class="filters-bottom" :style="{
+    <div v-if="!hasMore" class="bottom-space"></div>
+    <v-row
+      class="filters-bottom"
+      :style="{
         left: this.display.width.value <= 500 ? '15%' : '13.5%',
-        transform: 'translateX(-9%)'
-    }">
+        transform: 'translateX(-9%)',
+      }"
+    >
       <v-col :cols="this.display.width.value <= 600 ? 4 : 6">
         <v-menu
           :close-on-content-click="false"
@@ -499,13 +520,13 @@ export default {
               order: "desc",
               offset: this.offset,
               limit: this.perPage,
-              ...(!preloadNextPage && {id: this.idOpen}),
+              ...(!preloadNextPage && { id: this.idOpen }),
               city: this.cityOpen,
               state: this.stateOpen,
               country: this.countryOpen,
               takenAtFrom: this.startDateOpen,
               takenAtTo: this.endDateOpen,
-              tags: this.tagOpen
+              tags: this.tagOpen,
             },
           });
           const { images, total } = response.data;
@@ -583,7 +604,11 @@ export default {
     changeImage(direction) {
       if (this.loadingModalImage) return;
       const nextIndex = this.currentIndex + direction;
-      if (nextIndex >= 0 && nextIndex >= (this.items.length - 3) && nextIndex < this.items.length) {
+      if (
+        nextIndex >= 0 &&
+        nextIndex >= this.items.length - 3 &&
+        nextIndex < this.items.length
+      ) {
         this.loadingModalImage = true;
         this.loadImages({}, true);
         this.selectedImage = this.items[nextIndex];
@@ -715,7 +740,6 @@ export default {
       this.debounceLoadImages({});
     },
     selectedStates(newValue, oldValue) {
-
       const dontChangeStates =
         oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
 
@@ -765,7 +789,6 @@ export default {
       this.debounceLoadImages({});
     },
     selectedDate(newValue, oldValue) {
-
       const dontChangeSelectedDates =
         oldValue.slice().sort().join(",") === newValue.slice().sort().join(",");
 
@@ -837,9 +860,10 @@ export default {
 </script>
 <style scoped>
 .bottom-space {
-  height: 70px;
+  margin-top: 20px;
+  height: 150px;
 }
-.v-progress-circular {
+.load-inside-img {
   position: absolute;
   top: 50%;
   left: 50%;
