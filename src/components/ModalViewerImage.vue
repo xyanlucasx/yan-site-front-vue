@@ -393,7 +393,7 @@ export default {
     size() {
       let proportion = this.width / this.height;
       const screenWidth = this.screenWidth - 100;
-      const screenHeight = this.screenHeight - 150;
+      const screenHeight = this.screenHeight - 210;
       const screenProportion = screenWidth / screenHeight;
       if (this.isRotated) {
         proportion = this.height / this.width;

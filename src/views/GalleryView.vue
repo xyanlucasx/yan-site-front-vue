@@ -927,7 +927,7 @@ export default {
   position: fixed;
   left: 50%;
   transform: translateX(-43%);
-  bottom: 14px;
+  bottom: 30px;
   width: auto; /* ou uma largura específica se necessário */
   z-index: 9999;
 }
