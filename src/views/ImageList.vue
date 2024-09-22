@@ -64,7 +64,8 @@
   <modal-image-edit
     v-model="imageModal"
     :image="selectedImage"
-    @input="imageModal = $event"
+    @close-modal="imageModal = false"
+    @modify-image="updateImage"
   />
   <v-dialog v-model="showDialog" max-width="500" persistent>
     <v-card>
@@ -159,6 +160,10 @@ export default {
       } else {
         if (done) done("empty");
       }
+    },
+    updateImage(image) {
+      const index = this.items.findIndex((item) => item._id === image._id);
+      this.items[index] = image;
     },
     async openImageModal(item) {
       this.selectedImage = item;

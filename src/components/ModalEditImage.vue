@@ -187,7 +187,7 @@ export default {
   },
   methods: {
     closeImageModal() {
-      this.$emit("input", false);
+      this.$emit("close-modal", false);
     },
     async saveImage() {
       try{
@@ -197,13 +197,15 @@ export default {
         images: this.editedImage.images.filter(image=> image.versionName !== "Original"),
         original: this.editedImage.images.find(image=> image.versionName === "Original"),
       };
-      await this.$api.patch(`images/${this.editedImage._id}`, updatedPayload);
+      const updatedImage = await this.$api.patch(`images/${this.editedImage._id}`, updatedPayload);
       this.success = true;
+      this.$emit("modify-image", updatedImage.data);
     } catch (error) {
       this.error = true;
       console.error(error);
     } finally {
       this.loadingSave = false
+
     }
     },
     selectImage(index) {
