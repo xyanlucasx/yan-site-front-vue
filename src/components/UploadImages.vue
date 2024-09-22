@@ -71,7 +71,7 @@
     <modal-image-edit
       v-model="imageModal"
       :image="uploadedImage"
-      @input="imageModal = $event"
+      @close-modal="imageModal = false"
     />
   </v-app>
 </template>
@@ -116,6 +116,9 @@ export default {
     },
     async openImageModal(item) {
       this.uploadedImage = item;
+      if (item.original && !item.images.some((image)=> image.versionName === "Original")) {
+        this.uploadedImage.images.push(item.original);
+      }
       this.imageModal = true;
     },
     async uploadImages() {
