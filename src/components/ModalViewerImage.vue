@@ -375,6 +375,9 @@ export default {
       touchInProgress: false,
       touchStartX: null,
       touchEndX: 0,
+      touchStartTime: null,
+      touchEndTime: null,
+      touchSwipeDuration: 300,
       threshold: 40,
     };
   },
@@ -508,9 +511,14 @@ export default {
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
-        if (this.touchStartX !== null) {
+
+        this.touchEndTime = event.timeStamp;
+
+        if (this.touchStartX !== null && this.touchStartTime !== null) {
           const direction = this.touchStartX - this.touchEndX;
-          if (Math.abs(direction) > this.threshold) {
+          const duration = this.touchEndTime - this.touchStartTime; // Duração em milissegundos
+
+          if (Math.abs(direction) > this.threshold && duration < this.touchSwipeDuration) {
             if (direction > 0) {
               this.nextImage();
             } else {
@@ -518,6 +526,8 @@ export default {
             }
           }
           this.touchStartX = null; // Reseta para a próxima interação
+          this.touchStartTime = null;
+
           return;
         }
 
@@ -530,6 +540,8 @@ export default {
       } else if (event.type === "touchmove" && event.touches.length === 1) {
         if (this.touchStartX === null) {
           this.touchStartX = event.touches[0].clientX;
+          this.touchStartTime = event.timeStamp;
+
         }
         this.touchEndX = event.touches[0].clientX;
       }
