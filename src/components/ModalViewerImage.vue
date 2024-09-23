@@ -471,6 +471,7 @@ export default {
     const aux = this.screenWidth;
     this.screenWidth = this.screenHeight;
     this.screenHeight = aux;
+    this.$emit('re-open')
   },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "ArrowLeft") {
