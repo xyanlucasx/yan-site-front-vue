@@ -378,22 +378,14 @@ export default {
       touchStartTime: null,
       touchEndTime: null,
       touchSwipeDuration: 300,
-      threshold: 40,
-      screenWidth: window.screen.width,
-      screenHeight: window.screen.height,
+      threshold: 40
     };
   },
-  mounted() {
-  window.addEventListener('orientationchange', this.screenRotation);
-},
- beforeUnmount() {
-  window.removeEventListener('orientationchange', this.screenRotation);
-},
   computed: {
     size() {
       let proportion = this.width / this.height;
-      const screenWidth = this.screenWidth - 100;
-      const screenHeight = this.screenHeight - 300;
+      const screenWidth = this.display.width.value - 100;
+      const screenHeight = this.display.height.value - 150;
       const screenProportion = screenWidth / screenHeight;
       if (this.isRotated) {
         proportion = this.height / this.width;
@@ -465,14 +457,6 @@ export default {
     },
   },
   methods: {
-    screenRotation() {
-      //console.log(event)
-      //console.log(window.screen.orientation.type)
-    const aux = this.screenWidth;
-    this.screenWidth = this.screenHeight;
-    this.screenHeight = aux;
-    this.$emit('re-open')
-  },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "ArrowLeft") {
         this.activeIndex =

@@ -313,7 +313,6 @@
     @prev="changeImage(-1)"
     @close="closeImageModal()"
     @finishLoadgImage="loadingModalImage = false"
-    @re-open="viewerModal = false; viewerModal = true"
   />
   <v-snackbar v-model="error" color="error" top>{{ errorMessage }}</v-snackbar>
 </template>
