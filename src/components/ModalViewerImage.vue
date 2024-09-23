@@ -381,6 +381,12 @@ export default {
       threshold: 40
     };
   },
+  mounted() {
+  window.addEventListener('orientationchange', this.screenRotation);
+},
+ beforeUnmount() {
+  window.removeEventListener('orientationchange', this.screenRotation);
+},
   computed: {
     size() {
       let proportion = this.width / this.height;
@@ -457,6 +463,10 @@ export default {
     },
   },
   methods: {
+    screenRotation(){
+      window.scrollBy(0, 1);
+      window.scrollBy(0, -1);
+    },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "ArrowLeft") {
         this.activeIndex =
