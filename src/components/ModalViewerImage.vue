@@ -352,6 +352,7 @@ import { getDateHour } from "@/utils/date";
 import { nextTick } from "vue";
 
 export default {
+  previousSize: null,
   props: {
     image: Object,
     width: Number,
@@ -379,9 +380,7 @@ export default {
       touchEndTime: null,
       touchSwipeDuration: 300,
       threshold: 40,
-      lastOrientation: window.screen.orientation.type.split('-')[0],
-      lastWidth: 0,
-      lastHeight: 0
+      initialDevicePixelRatio: window.devicePixelRatio,
     };
   },
   mounted() {
@@ -392,21 +391,27 @@ export default {
 },
   computed: {
     size() {
+      if (this.previousSize && window.devicePixelRatio !== this.initialDevicePixelRatio) {
+        return this.previousSize
+      }
+
       let proportion = this.width / this.height;
       const screenWidth = this.display.width.value - 100;
       const screenHeight = this.display.height.value - 150;
       const screenProportion = screenWidth / screenHeight;
+      let newSize
+
       if (this.isRotated) {
         proportion = this.height / this.width;
 
         if (proportion > screenProportion) {
           if (proportion < 1) {
-            return {
+            newSize = {
               width: screenHeight * proportion + "px",
               height: screenWidth * proportion + "px",
             };
           } else {
-            return {
+            newSize = {
               width:
                 (screenHeight < screenWidth ? screenHeight : screenWidth) /
                   proportion +
@@ -417,12 +422,12 @@ export default {
           }
         } else {
           if (proportion > 1) {
-            return {
+            newSize = {
               width: screenHeight / proportion + "px",
               height: screenWidth / screenProportion + "px",
             };
           } else {
-            return {
+            newSize = {
               width: screenHeight + "px",
               height:
                 (screenProportion > 1 ? screenHeight : screenWidth) *
@@ -434,16 +439,17 @@ export default {
       }
 
       if (proportion > screenProportion) {
-        return {
+        newSize = {
           width: screenWidth + "px",
           height: screenWidth / proportion + "px",
         };
       } else {
-        return {
+        newSize = {
           width: screenHeight * proportion + "px",
           height: screenHeight + "px",
         };
       }
+      return newSize
     },
     heightEightyPercent() {
       return this.size.height.slice(0,-2) * 0.8 + "px";
@@ -587,6 +593,9 @@ export default {
       this.noEditedVersion =
         this.version === "original" || !value.images?.length ? true : false;
     },
+    size(value){
+      this.previousSize = value
+    }
   },
 };
 </script>
