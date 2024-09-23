@@ -391,14 +391,16 @@ export default {
 },
   computed: {
     size() {
-      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
-        return this.previousSize
-      }
-
       let proportion = this.width / this.height;
       const screenWidth = this.display.width.value - 100;
       const screenHeight = this.display.height.value - 150;
       const screenProportion = screenWidth / screenHeight;
+
+      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
+        console.log('entrou n muda')
+        return this.previousSize
+      }
+
       let newSize
 
       if (this.isRotated) {
