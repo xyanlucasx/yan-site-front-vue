@@ -380,7 +380,7 @@ export default {
       touchEndTime: null,
       touchSwipeDuration: 300,
       threshold: 40,
-      initialDevicePixelRatio: window.devicePixelRatio,
+      initialScale: window.visualViewport.scale,
     };
   },
   mounted() {
@@ -391,7 +391,7 @@ export default {
 },
   computed: {
     size() {
-      if (this.previousSize && window.devicePixelRatio !== this.initialDevicePixelRatio) {
+      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
         return this.previousSize
       }
 
