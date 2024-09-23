@@ -464,8 +464,10 @@ export default {
   },
   methods: {
     screenRotation(){
-      window.scrollBy(0, 1);
-      window.scrollBy(0, -1);
+      setTimeout(()=>{
+        window.scrollBy(0, 1);
+        window.scrollBy(0, -1);
+      },500)
     },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "ArrowLeft") {
