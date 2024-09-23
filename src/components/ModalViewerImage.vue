@@ -393,7 +393,7 @@ export default {
     size() {
       let proportion = this.width / this.height;
       const screenWidth = this.screenWidth - 100;
-      const screenHeight = this.screenHeight - 210;
+      const screenHeight = this.screenHeight - 300;
       const screenProportion = screenWidth / screenHeight;
       if (this.isRotated) {
         proportion = this.height / this.width;
@@ -466,6 +466,8 @@ export default {
   },
   methods: {
     screenRotation() {
+      //console.log(event)
+      //console.log(window.screen.orientation.type)
     const aux = this.screenWidth;
     this.screenWidth = this.screenHeight;
     this.screenHeight = aux;
