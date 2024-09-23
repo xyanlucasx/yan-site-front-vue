@@ -378,14 +378,17 @@ export default {
       touchStartTime: null,
       touchEndTime: null,
       touchSwipeDuration: 300,
-      threshold: 40
+      threshold: 40,
+      lastOrientation: window.screen.orientation.type.split('-')[0],
+      lastWidth: 0,
+      lastHeight: 0
     };
   },
   mounted() {
-  window.addEventListener('orientationchange', this.screenRotation);
+  screen.orientation.addEventListener('change', this.screenRotation);
 },
  beforeUnmount() {
-  window.removeEventListener('orientationchange', this.screenRotation);
+  screen.orientation.removeEventListener('change', this.screenRotation);
 },
   computed: {
     size() {
