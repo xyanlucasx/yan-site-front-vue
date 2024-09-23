@@ -397,7 +397,6 @@ export default {
       const screenProportion = screenWidth / screenHeight;
 
       if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
-        console.log('entrou n muda')
         return this.previousSize
       }
 
