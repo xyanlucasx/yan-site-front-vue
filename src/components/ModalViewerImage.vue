@@ -437,8 +437,7 @@ export default {
             };
           }
         }
-      }
-
+      } else {
       if (proportion > screenProportion) {
         newSize = {
           width: screenWidth + "px",
@@ -450,6 +449,7 @@ export default {
           height: screenHeight + "px",
         };
       }
+    }
       return newSize
     },
     heightEightyPercent() {
