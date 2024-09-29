@@ -426,47 +426,28 @@ export default {
 
         if (proportion > screenProportion) {
           if (proportion < 1) {
-            this.size = {
-              width: screenHeight * proportion + "px",
-              height: screenWidth * proportion + "px",
-            };
+            this.size.width = screenHeight * proportion + "px"
+            this.size.height = screenWidth * proportion + "px"
           } else {
-            this.size = {
-              width:
-                (screenHeight < screenWidth ? screenHeight : screenWidth) /
-                  proportion +
-                "px",
-              height:
-                screenWidth > screenHeight ? screenHeight : screenWidth + "px",
-            };
+            this.size.width = (screenHeight < screenWidth ? screenHeight : screenWidth) / proportion + "px"
+            this.size.height = screenWidth > screenHeight ? screenHeight : screenWidth + "px"
           }
         } else {
           if (proportion > 1) {
-            this.size = {
-              width: screenHeight / proportion + "px",
-              height: screenWidth / screenProportion + "px",
-            };
+            this.size.width = screenHeight / proportion + "px"
+            this.size.height = screenWidth / screenProportion + "px"
           } else {
-            this.size = {
-              width: screenHeight + "px",
-              height:
-                (screenProportion > 1 ? screenHeight : screenWidth) *
-                  proportion +
-                "px",
-            };
+            this.size.width = screenHeight + "px",
+            this.size.height = (screenProportion > 1 ? screenHeight : screenWidth) * proportion + "px"
           }
         }
       } else {
       if (proportion > screenProportion) {
-        this.size = {
-          width: screenWidth + "px",
-          height: screenWidth / proportion + "px",
-        };
+        this.size.width = screenWidth + "px"
+        this.size.height = screenWidth / proportion + "px"
       } else {
-        this.size = {
-          width: screenHeight * proportion + "px",
-          height: screenHeight + "px",
-        };
+        this.size.width = screenHeight * proportion + "px"
+        this.size.height = screenHeight + "px"
       }
     }
     },
