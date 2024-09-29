@@ -474,7 +474,6 @@ export default {
   },
   methods: {
     screenRotation(){
-      window.alert('rotacionou')
       this.initialScale = window.visualViewport.scale;
       setTimeout(()=>{
         window.scrollBy(0, 1);
