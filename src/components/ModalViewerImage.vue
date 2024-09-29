@@ -327,8 +327,8 @@
                       {{ image.description }}
                     </v-tabs-window-item>
                     <v-tabs-window-item :value="3">
-                      <v-chip-group selected-class="text-primary" column>
-                        <v-chip v-for="tag in image.tags" :key="tag">
+                      <v-chip-group column>
+                        <v-chip class="non-clickable" v-for="tag in image.tags" :key="tag">
                           {{ tag }}
                         </v-chip>
                       </v-chip-group>
@@ -387,11 +387,9 @@ export default {
   },
   mounted() {
   screen.orientation.addEventListener('change', this.screenRotation);
-  window.addEventListener('resize', this.resize);
 },
  beforeUnmount() {
   screen.orientation.removeEventListener('change', this.screenRotation);
-  window.removeEventListener('resize', this.resize);
 },
   computed: {
     heightEightyPercent() {
@@ -661,6 +659,10 @@ export default {
 .arrow-expand-panel {
   padding-left: 0px;
   padding-right: 0px;
+}
+
+.non-clickable {
+  pointer-events: none;
 }
 
 .v-tab.v-tab.v-btn {
