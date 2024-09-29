@@ -2,7 +2,7 @@
   <v-container @keydown="closeImageModal()">
     <v-row class="filters-top">
       <v-col :cols="this.display.width.value <= 600 ? 4 : 3">
-        <v-autocomplete
+        <v-select
           v-model="selectedCountries"
           label="Country"
           :items="countries"
@@ -12,7 +12,6 @@
           variant="solo-filled"
           density="compact"
           clearable
-          autocomplete="null"
         >
           <template v-slot:selection="data">
             <v-chip
@@ -23,9 +22,9 @@
               close
               class="selected-filter-chip"
               :style="
-                selectedCountries.length >= 10 && display.width.value <= 400
-                  ? { padding: '0', 'font-size': '8px' }
-                  : display.width.value <= 450
+                selectedCountries.length >= 10 && display.width.value <= 380
+                  ? { padding: '0' }
+                  : display.width.value <= 360
                   ? { padding: '0' }
                   : {}
               "
@@ -33,10 +32,10 @@
               {{ selectedCountries.length }}
             </v-chip>
           </template>
-        </v-autocomplete>
+        </v-select>
       </v-col>
       <v-col :cols="this.display.width.value <= 600 ? 4 : 4">
-        <v-autocomplete
+        <v-select
           label="State"
           :items="computedStates"
           v-model="selectedStates"
@@ -46,7 +45,6 @@
           variant="solo-filled"
           density="compact"
           clearable
-          autocomplete="null"
         >
           <template v-slot:selection="data">
             <v-chip
@@ -57,9 +55,9 @@
               close
               class="selected-filter-chip"
               :style="
-                selectedStates.length >= 10 && display.width.value <= 400
-                  ? { padding: '0', 'font-size': '8px' }
-                  : display.width.value <= 450
+                selectedStates.length >= 10 && display.width.value <= 380
+                  ? { padding: '0' }
+                  : display.width.value <= 360
                   ? { padding: '0' }
                   : {}
               "
@@ -67,10 +65,10 @@
               {{ selectedStates.length }}
             </v-chip>
           </template>
-        </v-autocomplete>
+        </v-select>
       </v-col>
       <v-col :cols="this.display.width.value <= 600 ? 4 : 3">
-        <v-autocomplete
+        <v-select
           label="City"
           :items="computedCities"
           v-model="selectedCities"
@@ -80,7 +78,6 @@
           variant="solo-filled"
           density="compact"
           clearable
-          autocomplete="null"
         >
           <template v-slot:selection="data">
             <v-chip
@@ -91,9 +88,9 @@
               close
               class="selected-filter-chip"
               :style="
-                selectedCities.length >= 10 && display.width.value <= 400
-                  ? { padding: '0', 'font-size': '8px' }
-                  : display.width.value <= 450
+                selectedCities.length >= 10 && display.width.value <= 380
+                  ? { padding: '0' }
+                  : display.width.value <= 360
                   ? { padding: '0' }
                   : {}
               "
@@ -101,7 +98,7 @@
               {{ selectedCities.length }}
             </v-chip>
           </template>
-        </v-autocomplete>
+        </v-select>
       </v-col>
       <v-col
         v-if="this.display.width.value > 600"
@@ -216,7 +213,7 @@
           max-width="100"
         >
           <template #activator="{ props }">
-            <v-autocomplete
+            <v-select
               v-model="dateRange"
               label="Date"
               readonly
@@ -225,7 +222,6 @@
               variant="solo-filled"
               density="compact"
               clearable
-              autocomplete="null"
             />
           </template>
           <v-date-picker
@@ -244,7 +240,7 @@
         </v-menu>
       </v-col>
       <v-col :cols="this.display.width.value <= 600 ? 4 : 6">
-        <v-autocomplete
+        <v-select
           label="Tags"
           :items="tags"
           v-model="selectedTags"
@@ -254,7 +250,6 @@
           variant="solo-filled"
           density="compact"
           clearable
-          autocomplete="null"
         >
           <template v-slot:selection="data">
             <v-chip
@@ -265,9 +260,9 @@
               close
               class="selected-filter-chip"
               :style="
-                selectedTags.length >= 10 && display.width.value <= 400
-                  ? { padding: '0', 'font-size': '8px' }
-                  : display.width.value <= 450
+                selectedTags.length >= 10 && display.width.value <= 380
+                  ? { padding: '0' }
+                  : display.width.value <= 360
                   ? { padding: '0' }
                   : {}
               "
@@ -275,7 +270,7 @@
               {{ selectedTags.length }}
             </v-chip>
           </template>
-        </v-autocomplete>
+        </v-select>
       </v-col>
       <v-col
         v-if="this.display.width.value <= 600"
@@ -891,12 +886,12 @@ export default {
   margin-top: -22px;
 }
 
-:deep(.v-autocomplete .v-label) {
+:deep(.v-select .v-label) {
   font-size: 12px;
   transform: translateY(-11px);
 }
 
-:deep(.v-autocomplete__menu-icon) {
+:deep(.v-select__menu-icon) {
   display: none;
 }
 
@@ -977,7 +972,7 @@ export default {
 .theme-switch-wrapper {
   border-radius: 100px; /* Bordas arredondadas para imitar campos de entrada */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra opcional para profundidade */
-  height: 40px; /* Altura específica para alinhar com v-autocomplete */
+  height: 40px; /* Altura específica para alinhar com v-select */
   display: flex;
   margin-top: 11px;
   padding: 5px;
@@ -987,7 +982,7 @@ export default {
 .theme-switch-wrapper-top {
   border-radius: 100px; /* Bordas arredondadas para imitar campos de entrada */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra opcional para profundidade */
-  height: 40px; /* Altura específica para alinhar com v-autocomplete */
+  height: 40px; /* Altura específica para alinhar com v-select */
   display: flex;
   margin-top: 13px;
   padding: 5px;
