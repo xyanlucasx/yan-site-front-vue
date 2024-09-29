@@ -396,18 +396,10 @@ export default {
       const screenHeight = this.display.height.value - 150;
       const screenProportion = screenWidth / screenHeight;
 
-      console.log('size')
-      console.log(this.previousSize)
-      console.log(window.innerWidth)
-      console.log(this.display.width.value)
-      console.log(window.innerHeight)
-      console.log(this.display.height.value)
-      if (this.previousSize && (window.innerWidth !== this.display.width.value || window.innerHeight !== this.display.height.value)) {
-        window.alert('teste')
+      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
         return this.previousSize
       }
 
-      console.log('passou do preview')
       let newSize
 
       if (this.isRotated) {
@@ -482,6 +474,7 @@ export default {
   },
   methods: {
     screenRotation(){
+      this.initialScale = window.visualViewport.scale;
       setTimeout(()=>{
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
