@@ -352,7 +352,6 @@ import { getDateHour } from "@/utils/date";
 import { nextTick } from "vue";
 
 export default {
-  previousSize: null,
   props: {
     image: Object,
     width: Number,
@@ -380,78 +379,21 @@ export default {
       touchEndTime: null,
       touchSwipeDuration: 300,
       threshold: 40,
-      initialScale: window.visualViewport.scale,
+      size: {
+        width: "100px",
+        height: "100px"
+      }
     };
   },
   mounted() {
   screen.orientation.addEventListener('change', this.screenRotation);
+  window.addEventListener('resize', this.resize);
 },
  beforeUnmount() {
   screen.orientation.removeEventListener('change', this.screenRotation);
+  window.removeEventListener('resize', this.resize);
 },
   computed: {
-    size() {
-      let proportion = this.width / this.height;
-      const screenWidth = this.display.width.value - 100;
-      const screenHeight = this.display.height.value - 150;
-      const screenProportion = screenWidth / screenHeight;
-
-      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
-        return this.previousSize
-      }
-
-      let newSize
-
-      if (this.isRotated) {
-        proportion = this.height / this.width;
-
-        if (proportion > screenProportion) {
-          if (proportion < 1) {
-            newSize = {
-              width: screenHeight * proportion + "px",
-              height: screenWidth * proportion + "px",
-            };
-          } else {
-            newSize = {
-              width:
-                (screenHeight < screenWidth ? screenHeight : screenWidth) /
-                  proportion +
-                "px",
-              height:
-                screenWidth > screenHeight ? screenHeight : screenWidth + "px",
-            };
-          }
-        } else {
-          if (proportion > 1) {
-            newSize = {
-              width: screenHeight / proportion + "px",
-              height: screenWidth / screenProportion + "px",
-            };
-          } else {
-            newSize = {
-              width: screenHeight + "px",
-              height:
-                (screenProportion > 1 ? screenHeight : screenWidth) *
-                  proportion +
-                "px",
-            };
-          }
-        }
-      } else {
-      if (proportion > screenProportion) {
-        newSize = {
-          width: screenWidth + "px",
-          height: screenWidth / proportion + "px",
-        };
-      } else {
-        newSize = {
-          width: screenHeight * proportion + "px",
-          height: screenHeight + "px",
-        };
-      }
-    }
-      return newSize
-    },
     heightEightyPercent() {
       return this.size.height.slice(0,-2) * 0.8 + "px";
     },
@@ -473,8 +415,63 @@ export default {
     },
   },
   methods: {
+    resize() {
+      let proportion = this.width / this.height;
+      const screenWidth = this.display.width.value - 100;
+      const screenHeight = this.display.height.value - 150;
+      const screenProportion = screenWidth / screenHeight;
+
+      if (this.isRotated) {
+        proportion = this.height / this.width;
+
+        if (proportion > screenProportion) {
+          if (proportion < 1) {
+            this.size = {
+              width: screenHeight * proportion + "px",
+              height: screenWidth * proportion + "px",
+            };
+          } else {
+            this.size = {
+              width:
+                (screenHeight < screenWidth ? screenHeight : screenWidth) /
+                  proportion +
+                "px",
+              height:
+                screenWidth > screenHeight ? screenHeight : screenWidth + "px",
+            };
+          }
+        } else {
+          if (proportion > 1) {
+            this.size = {
+              width: screenHeight / proportion + "px",
+              height: screenWidth / screenProportion + "px",
+            };
+          } else {
+            this.size = {
+              width: screenHeight + "px",
+              height:
+                (screenProportion > 1 ? screenHeight : screenWidth) *
+                  proportion +
+                "px",
+            };
+          }
+        }
+      } else {
+      if (proportion > screenProportion) {
+        this.size = {
+          width: screenWidth + "px",
+          height: screenWidth / proportion + "px",
+        };
+      } else {
+        this.size = {
+          width: screenHeight * proportion + "px",
+          height: screenHeight + "px",
+        };
+      }
+    }
+    },
     screenRotation(){
-      this.initialScale = window.visualViewport.scale;
+      this.resize()
       setTimeout(()=>{
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
@@ -572,6 +569,9 @@ export default {
     },
   },
   watch: {
+    isRotated() {
+      this.resize();
+    },
     onlyOriginal(newValue) {
       if (newValue) {
         this.noEditedVersion = true;
@@ -591,13 +591,11 @@ export default {
       }
     },
     image(value) {
+      this.resize()
       this.activeIndex = Number(this.version) - 1;
       this.noEditedVersion =
         this.version === "original" || !value.images?.length ? true : false;
     },
-    size(value){
-      this.previousSize = value
-    }
   },
 };
 </script>
