@@ -396,10 +396,14 @@ export default {
       const screenHeight = this.display.height.value - 150;
       const screenProportion = screenWidth / screenHeight;
 
+      console.log('size')
+
       if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
+        window.alert('teste')
         return this.previousSize
       }
 
+      console.log('passou do preview')
       let newSize
 
       if (this.isRotated) {
