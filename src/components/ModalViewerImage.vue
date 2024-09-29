@@ -397,8 +397,12 @@ export default {
       const screenProportion = screenWidth / screenHeight;
 
       console.log('size')
-
-      if (this.previousSize && window.visualViewport.scale !== this.initialScale) {
+      console.log(this.previousSize)
+      console.log(window.innerWidth)
+      console.log(this.display.width.value)
+      console.log(window.innerHeight)
+      console.log(this.display.height.value)
+      if (this.previousSize && (window.innerWidth !== this.display.width.value || window.innerHeight !== this.display.height.value)) {
         window.alert('teste')
         return this.previousSize
       }
