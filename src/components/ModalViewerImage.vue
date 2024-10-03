@@ -454,6 +454,10 @@ export default {
         this.size.height = screenHeight + "px"
       }
     }
+    window.alert (`
+      screenWidth: ${screenWidth}, imgWidth: ${this.size.width}\n
+      screenHeight: ${screenHeight}, imgHeight: ${this.size.height}
+    `)
     },
     screenRotation(){
       this.resize()
