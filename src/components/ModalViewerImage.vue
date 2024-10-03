@@ -421,7 +421,7 @@ export default {
     let screenHeight = window.screen.height - 150;
     // Verifica se precisamos trocar os valores de largura e altura
     if ((screenWidth > screenHeight && isPortrait) || (screenWidth < screenHeight && !isPortrait)) {
-      [screenWidth, screenHeight] = [(screenHeight - 150), screenWidth];
+      [screenWidth, screenHeight] = [(screenHeight - 150), (screenWidth - 100)];
     }
       const screenProportion = screenWidth / screenHeight;
 
