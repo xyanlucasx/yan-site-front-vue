@@ -417,8 +417,8 @@ export default {
       let proportion = this.width / this.height;
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
 
-    let screenWidth = window.screen.width;
-    let screenHeight = window.screen.height;
+    let screenWidth = window.screen.width - 100;
+    let screenHeight = window.screen.height - 150;
     // Verifica se precisamos trocar os valores de largura e altura
     if ((screenWidth > screenHeight && isPortrait) || (screenWidth < screenHeight && !isPortrait)) {
       [screenWidth, screenHeight] = [screenHeight, screenWidth];
