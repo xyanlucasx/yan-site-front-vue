@@ -415,8 +415,8 @@ export default {
   methods: {
     resize() {
       let proportion = this.width / this.height;
-      const screenWidth = this.display.width.value - 100;
-      const screenHeight = this.display.height.value - 150;
+      const screenWidth = window.screen.width - 100;
+      const screenHeight = window.screen.height - 150;
       const screenProportion = screenWidth / screenHeight;
 
       if (this.isRotated) {
