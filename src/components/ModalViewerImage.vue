@@ -450,6 +450,7 @@ export default {
     }
     },
     screenRotation(){
+      window.alert('rotate')
       this.resize()
       setTimeout(()=>{
         window.scrollBy(0, 1);
