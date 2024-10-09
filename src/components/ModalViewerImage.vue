@@ -74,7 +74,10 @@
           v-model="panelExpanded"
           v-if="expandedPanelVisible"
         >
-          <v-expansion-panel class="expansion-box" :style="{'max-height': heightEightyPercent}">
+          <v-expansion-panel
+            class="expansion-box"
+            :style="{ 'max-height': heightEightyPercent }"
+          >
             <v-expansion-panel-title
               readonly
               hide-actions
@@ -132,10 +135,10 @@
                             class="location-menu"
                             :href="`https://www.google.com/maps?q=${image.metadata.latitude},${image.metadata.longitude}`"
                             target="_blank"
-                            v-if="(
+                            v-if="
                               image.metadata.latitude &&
                               image.metadata.longitude
-                            )"
+                            "
                           >
                             <v-row>
                               <v-col cols="3">
@@ -153,10 +156,10 @@
                             class="location-menu"
                             :href="`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${image.metadata.latitude},${image.metadata.longitude}&heading=${image.metadata.cameraTrueDirection}&pitch=0&fov=90`"
                             target="_blank"
-                            v-if="(
+                            v-if="
                               image.metadata.latitude &&
                               image.metadata.longitude
-                            )"
+                            "
                           >
                             <v-row>
                               <v-col cols="3">
@@ -289,7 +292,13 @@
                     </v-col>
                   </v-row>
                 </v-tabs>
-                <v-card-text :style = "{'max-height': heightThirtyPercent, 'overflow-y': 'auto'}" class="text-specs-description-tags">
+                <v-card-text
+                  :style="{
+                    'max-height': heightThirtyPercent,
+                    'overflow-y': 'auto',
+                  }"
+                  class="text-specs-description-tags"
+                >
                   <v-tabs-window v-model="tab">
                     <v-tabs-window-item :value="1">
                       <v-row>
@@ -328,7 +337,11 @@
                     </v-tabs-window-item>
                     <v-tabs-window-item :value="3">
                       <v-chip-group column>
-                        <v-chip class="non-clickable" v-for="tag in image.tags" :key="tag">
+                        <v-chip
+                          class="non-clickable"
+                          v-for="tag in image.tags"
+                          :key="tag"
+                        >
                           {{ tag }}
                         </v-chip>
                       </v-chip-group>
@@ -381,22 +394,22 @@ export default {
       threshold: 40,
       size: {
         width: "100px",
-        height: "100px"
-      }
+        height: "100px",
+      },
     };
   },
   mounted() {
-  screen.orientation.addEventListener('change', this.screenRotation);
-},
- beforeUnmount() {
-  screen.orientation.removeEventListener('change', this.screenRotation);
-},
+    screen.orientation.addEventListener("change", this.screenRotation);
+  },
+  beforeUnmount() {
+    screen.orientation.removeEventListener("change", this.screenRotation);
+  },
   computed: {
     heightEightyPercent() {
-      return this.size.height.slice(0,-2) * 0.8 + "px";
+      return this.size.height.slice(0, -2) * 0.8 + "px";
     },
     heightThirtyPercent() {
-      return this.size.height.slice(0,-2) * 0.3 + "px";
+      return this.size.height.slice(0, -2) * 0.3 + "px";
     },
     fullLocationText() {
       return `${this.image.country}
@@ -415,52 +428,59 @@ export default {
   methods: {
     resize() {
       setTimeout(() => {
-      let proportion = this.width / this.height;
+        let proportion = this.width / this.height;
 
-      let screenWidth = document.documentElement.clientWidth - 100;
-      let screenHeight = document.documentElement.clientHeight - 150;
+        let screenWidth = document.documentElement.clientWidth - 100;
+        let screenHeight = document.documentElement.clientHeight - 150;
 
-      const screenProportion = screenWidth / screenHeight;
+        const screenProportion = screenWidth / screenHeight;
 
-      if (this.isRotated) {
-        proportion = this.height / this.width;
+        if (this.isRotated) {
+          proportion = this.height / this.width;
 
-        if (proportion > screenProportion) {
-          if (proportion < 1) {
-            this.size.width = screenHeight * proportion + "px"
-            this.size.height = screenWidth * proportion + "px"
+          if (proportion > screenProportion) {
+            if (proportion < 1) {
+              this.size.width = screenHeight * proportion + "px";
+              this.size.height = screenWidth * proportion + "px";
+            } else {
+              this.size.width =
+                (screenHeight < screenWidth ? screenHeight : screenWidth) /
+                  proportion +
+                "px";
+              this.size.height =
+                screenWidth > screenHeight ? screenHeight : screenWidth + "px";
+            }
           } else {
-            this.size.width = (screenHeight < screenWidth ? screenHeight : screenWidth) / proportion + "px"
-            this.size.height = screenWidth > screenHeight ? screenHeight : screenWidth + "px"
+            if (proportion > 1) {
+              this.size.width = screenHeight / proportion + "px";
+              this.size.height = screenWidth / screenProportion + "px";
+            } else {
+              (this.size.width = screenHeight + "px"),
+                (this.size.height =
+                  (screenProportion > 1 ? screenHeight : screenWidth) *
+                    proportion +
+                  "px");
+            }
           }
         } else {
-          if (proportion > 1) {
-            this.size.width = screenHeight / proportion + "px"
-            this.size.height = screenWidth / screenProportion + "px"
+          if (proportion > screenProportion) {
+            this.size.width = screenWidth + "px";
+            this.size.height = screenWidth / proportion + "px";
           } else {
-            this.size.width = screenHeight + "px",
-            this.size.height = (screenProportion > 1 ? screenHeight : screenWidth) * proportion + "px"
+            this.size.width = screenHeight * proportion + "px";
+            this.size.height = screenHeight + "px";
           }
         }
-      } else {
-      if (proportion > screenProportion) {
-        this.size.width = screenWidth + "px"
-        this.size.height = screenWidth / proportion + "px"
-      } else {
-        this.size.width = screenHeight * proportion + "px"
-        this.size.height = screenHeight + "px"
-      }
-    }
-    }, 300)
+      }, 300);
     },
-    screenRotation(){
-      this.resize()
+    screenRotation() {
+      this.resize();
 
       //safari iphone bug fix, scroll to unlock buttons and interface
-      setTimeout(()=>{
+      setTimeout(() => {
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
-      },500)
+      }, 500);
     },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "ArrowLeft") {
@@ -491,12 +511,13 @@ export default {
       this.$emit("close");
     },
     async copyColorCode(color) {
-      const toHex = c => {
-    const hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-  };
+      const toHex = (c) => {
+        const hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      };
 
-    const hexColor =  "#" + toHex(color.red) + toHex(color.green) + toHex(color.blue);
+      const hexColor =
+        "#" + toHex(color.red) + toHex(color.green) + toHex(color.blue);
       await navigator.clipboard.writeText(hexColor);
 
       this.toastMessage = "color code copied successfully: " + hexColor;
@@ -514,14 +535,16 @@ export default {
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
-
         this.touchEndTime = event.timeStamp;
 
         if (this.touchStartX !== null && this.touchStartTime !== null) {
           const direction = this.touchStartX - this.touchEndX;
           const duration = this.touchEndTime - this.touchStartTime; // Duração em milissegundos
 
-          if (Math.abs(direction) > this.threshold && duration < this.touchSwipeDuration) {
+          if (
+            Math.abs(direction) > this.threshold &&
+            duration < this.touchSwipeDuration
+          ) {
             if (direction > 0) {
               this.nextImage();
             } else {
@@ -544,7 +567,6 @@ export default {
         if (this.touchStartX === null) {
           this.touchStartX = event.touches[0].clientX;
           this.touchStartTime = event.timeStamp;
-
         }
         this.touchEndX = event.touches[0].clientX;
       }
@@ -576,7 +598,7 @@ export default {
       }
     },
     image(value) {
-      this.resize()
+      this.resize();
       this.activeIndex = Number(this.version) - 1;
       this.noEditedVersion =
         this.version === "original" || !value.images?.length ? true : false;
