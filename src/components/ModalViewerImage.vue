@@ -416,12 +416,14 @@ export default {
     resize() {
       let proportion = this.width / this.height;
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+      let virou = false
 
     let screenWidth = window.screen.width - 100;
     let screenHeight = window.screen.height - 150;
     // Verifica se precisamos trocar os valores de largura e altura
     if ((screenWidth > screenHeight && isPortrait) || (screenWidth < screenHeight && !isPortrait)) {
       [screenWidth, screenHeight] = [(screenHeight - 150), (screenWidth - 100)];
+      virou = true
     }
       const screenProportion = screenWidth / screenHeight;
 
@@ -455,6 +457,7 @@ export default {
       }
     }
     window.alert (`
+      virou: ${virou}
       screenWidth: ${screenWidth}, imgWidth: ${this.size.width}\n
       screenHeight: ${screenHeight}, imgHeight: ${this.size.height}
     `)
