@@ -414,6 +414,7 @@ export default {
   },
   methods: {
     resize() {
+      setTimeout(() => {
       let proportion = this.width / this.height;
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
       let virou = false
@@ -461,6 +462,7 @@ export default {
       screenWidth: ${screenWidth}, imgWidth: ${this.size.width}\n
       screenHeight: ${screenHeight}, imgHeight: ${this.size.height}
     `)
+    }, 300)
     },
     screenRotation(){
       this.resize()
