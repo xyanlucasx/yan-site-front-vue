@@ -174,7 +174,7 @@
         @click="changeImage(-1)"
         class="nav-button prev"
         icon
-        :loading="loadingModalImage"
+        :loading="loadingModalImage || loading"
       >
         <v-icon size="20">mdi-chevron-left</v-icon>
       </v-btn>
@@ -182,7 +182,7 @@
         @click="toggleRotation"
         class="nav-button rotate"
         icon
-        :loading="loadingModalImage"
+        :loading="loadingModalImage || loading"
       >
         <v-icon v-if="isRotated" size="20">mdi-rotate-right</v-icon>
         <v-icon v-else size="20">mdi-rotate-left</v-icon>
@@ -191,7 +191,7 @@
         @click="changeImage(1)"
         class="nav-button next"
         icon
-        :loading="loadingModalImage"
+        :loading="loadingModalImage || loading"
       >
         <v-icon size="20">mdi-chevron-right</v-icon>
       </v-btn>
@@ -549,8 +549,8 @@ export default {
         if (done) done("empty");
       }
     },
-    debounceLoadImages: _.debounce(function (params) {
-      this.loadImages(params);
+    debounceLoadImages: _.debounce(function (params, preloadNextPage) {
+      this.loadImages(params, preloadNextPage);
     }, 300),
     async loadCountries() {
       try {
@@ -602,11 +602,11 @@ export default {
       const nextIndex = this.currentIndex + direction;
       if (
         nextIndex >= 0 &&
-        nextIndex >= this.items.length - 3 &&
+        nextIndex >= this.items.length - 1 &&
         nextIndex < this.items.length
       ) {
         this.loadingModalImage = true;
-        this.loadImages({}, true);
+        this.debounceLoadImages({done: () => this.loadingModalImage = false }, true);
         this.selectedImage = this.items[nextIndex];
         this.currentIndex = nextIndex;
         this.idOpen = this.selectedImage._id;

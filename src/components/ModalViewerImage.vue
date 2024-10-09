@@ -427,7 +427,7 @@ export default {
   },
   methods: {
     resize() {
-      setTimeout(() => {
+      setTimeout(() => { //timeout to avoid bug in safari iOS, when the screen is rotated the navigator dont update the screen size immediately
         let proportion = this.width / this.height;
 
         let screenWidth = document.documentElement.clientWidth - 100;
