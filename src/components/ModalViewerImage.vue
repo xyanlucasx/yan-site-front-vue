@@ -416,16 +416,10 @@ export default {
     resize() {
       setTimeout(() => {
       let proportion = this.width / this.height;
-      const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-      let virou = false
 
       let screenWidth = document.documentElement.clientWidth - 100;
       let screenHeight = document.documentElement.clientHeight - 150;
-    // Verifica se precisamos trocar os valores de largura e altura
-    if ((screenWidth > screenHeight && isPortrait) || (screenWidth < screenHeight && !isPortrait)) {
-      [screenWidth, screenHeight] = [(screenHeight - 150), (screenWidth - 100)];
-      virou = true
-    }
+
       const screenProportion = screenWidth / screenHeight;
 
       if (this.isRotated) {
@@ -457,15 +451,12 @@ export default {
         this.size.height = screenHeight + "px"
       }
     }
-    window.alert (`
-      virou: ${virou}
-      screenWidth: ${screenWidth}, imgWidth: ${this.size.width}\n
-      screenHeight: ${screenHeight}, imgHeight: ${this.size.height}
-    `)
     }, 300)
     },
     screenRotation(){
       this.resize()
+
+      //safari iphone bug fix, scroll to unlock buttons and interface
       setTimeout(()=>{
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
