@@ -471,7 +471,7 @@ export default {
             this.size.height = screenHeight + "px";
           }
         }
-      }, 300);
+      }, 100);
     },
     screenRotation() {
       this.resize();
