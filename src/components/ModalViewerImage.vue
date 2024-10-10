@@ -9,6 +9,7 @@
       style="overflow: visible; background-color: transparent"
       @mouseover="toggleHoverExpansionPanel"
       @mouseleave="toggleHoverExpansionPanel"
+      @touchstart="toggleHoverExpansionPanel"
       @touchend="toggleHoverExpansionPanel"
       @touchmove="toggleHoverExpansionPanel"
       :class="{ rotated: isRotated }"
@@ -532,6 +533,8 @@ export default {
         this.expandedPanelVisible = false;
       } else if (event.type === "mouseover" && !this.touchInProgress) {
         this.expandedPanelVisible = true;
+      } else if (event.type === "touchstart") {
+        window.alert("touchstart");
       } else if (
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
