@@ -427,7 +427,8 @@ export default {
   },
   methods: {
     resize() {
-      setTimeout(() => { //timeout to avoid bug in safari iOS, when the screen is rotated the navigator dont update the screen size immediately
+      setTimeout(() => {
+        //timeout to avoid bug in safari iOS, when the screen is rotated the navigator dont update the screen size immediately
         let proportion = this.width / this.height;
 
         let screenWidth = document.documentElement.clientWidth - 100;
@@ -524,6 +525,7 @@ export default {
       this.toastInfo = true;
     },
     async toggleHoverExpansionPanel(event) {
+      console.log(event);
       if (
         event.type === "mouseleave" &&
         event.relatedTarget?.className === "v-overlay__scrim"
@@ -533,6 +535,7 @@ export default {
         this.expandedPanelVisible = true;
       } else if (
         event.type === "touchend" &&
+        event.touches.length <= 1 &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
         this.touchEndTime = event.timeStamp;
@@ -540,7 +543,6 @@ export default {
         if (this.touchStartX !== null && this.touchStartTime !== null) {
           const direction = this.touchStartX - this.touchEndX;
           const duration = this.touchEndTime - this.touchStartTime; // Duração em milissegundos
-
           if (
             Math.abs(direction) > this.threshold &&
             duration < this.touchSwipeDuration
@@ -553,7 +555,6 @@ export default {
           }
           this.touchStartX = null; // Reseta para a próxima interação
           this.touchStartTime = null;
-
           return;
         }
 
@@ -563,7 +564,11 @@ export default {
         setTimeout(() => {
           this.touchInProgress = false;
         }, 300);
-      } else if (event.type === "touchmove" && event.touches.length === 1) {
+      } else if (
+        event.type === "touchmove" &&
+        event.touches.length === 1 &&
+        event.target.className === "v-img__img v-img__img--cover"
+      ) {
         if (this.touchStartX === null) {
           this.touchStartX = event.touches[0].clientX;
           this.touchStartTime = event.timeStamp;
