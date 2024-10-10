@@ -128,6 +128,7 @@
       :items="items"
       :onLoad="loadImages"
       empty-text=""
+      :key="infiniteScrollKey"
     >
       <v-container>
         <v-row>
@@ -160,14 +161,14 @@
         </v-row>
       </v-container>
       <template #loading>
-  <div class="bottom-space">
-    <v-progress-circular
-      indeterminate
-      color="green"
-      size="50"
-    ></v-progress-circular>
-  </div>
-</template>
+        <div class="bottom-space">
+          <v-progress-circular
+            indeterminate
+            color="green"
+            size="50"
+          ></v-progress-circular>
+        </div>
+      </template>
     </v-infinite-scroll>
     <v-row justify="center" class="nav-buttons" v-if="viewerModal">
       <v-btn
@@ -175,6 +176,7 @@
         class="nav-button prev"
         icon
         :loading="loadingModalImage || loading"
+        :disabled="loadingModalImage || loading"
       >
         <v-icon size="20">mdi-chevron-left</v-icon>
       </v-btn>
@@ -183,6 +185,7 @@
         class="nav-button rotate"
         icon
         :loading="loadingModalImage || loading"
+        :disabled="loadingModalImage || loading"
       >
         <v-icon v-if="isRotated" size="20">mdi-rotate-right</v-icon>
         <v-icon v-else size="20">mdi-rotate-left</v-icon>
@@ -192,6 +195,7 @@
         class="nav-button next"
         icon
         :loading="loadingModalImage || loading"
+        :disabled="loadingModalImage || loading"
       >
         <v-icon size="20">mdi-chevron-right</v-icon>
       </v-btn>
@@ -360,6 +364,7 @@ export default {
   data() {
     return {
       items: ref([]),
+      infiniteScrollKey: 0,
       loading: false,
       loadingModalImage: false,
       hasMore: true,
@@ -505,15 +510,15 @@ export default {
         this.closeImage();
       }
     },
-    async loadImages({ done }, preloadNextPage) {
-      if (this.hasMore) {
+    async loadImages({ done }, preloadNextPage, resetImages) {
+      if (this.hasMore || resetImages) {
         this.loading = true;
         try {
           const response = await this.$api.get("images", {
             params: {
               sort: "metadata.takenAt",
               order: "desc",
-              offset: this.offset,
+              offset: resetImages ? 0 : this.offset,
               limit: this.perPage,
               ...(!preloadNextPage && { id: this.idOpen }),
               city: this.cityOpen,
@@ -525,6 +530,10 @@ export default {
             },
           });
           const { images, total } = response.data;
+          if (resetImages) {
+            this.items.splice(0, this.items.length);
+            this.infiniteScrollKey += 1;
+          }
           this.items.push(...images);
           this.totalImages = total;
           this.hasMore = this.items.length < total;
@@ -541,7 +550,7 @@ export default {
           this.error = true;
           this.errorMessage = "Image not found";
           console.error("Image not found:", error);
-          window.location.assign('/gallery');
+          window.location.assign("/gallery");
         } finally {
           this.loading = false;
         }
@@ -549,9 +558,20 @@ export default {
         if (done) done("empty");
       }
     },
-    debounceLoadImages: _.debounce(function (params, preloadNextPage) {
-      this.loadImages(params, preloadNextPage);
-    }, 300),
+    debounceLoadImages: _.debounce(function (
+      params,
+      preloadNextPage,
+      resetImages
+    ) {
+      if (resetImages) {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+      this.loadImages(params, preloadNextPage, resetImages);
+    },
+    300),
     async loadCountries() {
       try {
         const response = await this.$api.get("countries");
@@ -606,7 +626,10 @@ export default {
         nextIndex < this.items.length
       ) {
         this.loadingModalImage = true;
-        this.debounceLoadImages({done: () => this.loadingModalImage = false }, true);
+        this.debounceLoadImages(
+          { done: () => (this.loadingModalImage = false) },
+          true
+        );
         this.selectedImage = this.items[nextIndex];
         this.currentIndex = nextIndex;
         this.idOpen = this.selectedImage._id;
@@ -676,12 +699,6 @@ export default {
         },
       });
     },
-    resetImages() {
-      this.loading = true;
-      this.hasMore = true;
-      this.items = [];
-      this.offset = 0;
-    },
   },
   watch: {
     selectedImage(value) {
@@ -732,8 +749,7 @@ export default {
       if (dontChangeCountryOpen) return;
 
       this.updateRoute();
-      this.resetImages();
-      this.debounceLoadImages({});
+      this.debounceLoadImages({}, false, true);
     },
     selectedStates(newValue, oldValue) {
       const dontChangeStates =
@@ -759,8 +775,7 @@ export default {
       if (dontChangeStateOpen) return;
 
       this.updateRoute();
-      this.resetImages();
-      this.debounceLoadImages({});
+      this.debounceLoadImages({}, false, true);
     },
     selectedCities(newValue, oldValue) {
       const dontChangeSelectedCities =
@@ -781,8 +796,7 @@ export default {
       if (dontChangeCityOpen) return;
 
       this.updateRoute();
-      this.resetImages();
-      this.debounceLoadImages({});
+      this.debounceLoadImages({}, false, true);
     },
     selectedDate(newValue, oldValue) {
       const dontChangeSelectedDates =
@@ -824,8 +838,7 @@ export default {
       }
 
       this.updateRoute();
-      this.resetImages();
-      this.debounceLoadImages({});
+      this.debounceLoadImages({}, false, true);
     },
     selectedTags(newValue, oldValue) {
       const dontChangeTags =
@@ -846,8 +859,7 @@ export default {
       if (dontChangeTagOpen) return;
 
       this.updateRoute();
-      this.resetImages();
-      this.debounceLoadImages({});
+      this.debounceLoadImages({}, false, true);
     },
     idOpen: "updateRoute",
     versionOpen: "updateRoute",
