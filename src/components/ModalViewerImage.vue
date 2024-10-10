@@ -563,37 +563,35 @@ export default {
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
-        if (event.touches.length !== 0 || this.maxTouchPoints !== 1) {
-          return;
-        }
+        if (event.touches.length === 0 || this.maxTouchPoints === 1) {
+          this.touchEndTime = event.timeStamp;
 
-        this.maxTouchPoints = 0;
-        this.touchEndTime = event.timeStamp;
-
-        if (this.touchStartX !== null && this.touchStartTime !== null) {
-          const direction = this.touchStartX - this.touchEndX;
-          const duration = this.touchEndTime - this.touchStartTime; // Duração em milissegundos
-          if (
-            Math.abs(direction) > this.threshold &&
-            duration < this.touchSwipeDuration
-          ) {
-            if (direction > 0) {
-              this.nextImage();
-            } else {
-              this.previousImage();
+          if (this.touchStartX !== null && this.touchStartTime !== null) {
+            const direction = this.touchStartX - this.touchEndX;
+            const duration = this.touchEndTime - this.touchStartTime; // Duração em milissegundos
+            if (
+              Math.abs(direction) > this.threshold &&
+              duration < this.touchSwipeDuration
+            ) {
+              if (direction > 0) {
+                this.nextImage();
+              } else {
+                this.previousImage();
+              }
             }
+            this.touchStartX = null; // Reseta para a próxima interação
+            this.touchStartTime = null;
+            return;
           }
-          this.touchStartX = null; // Reseta para a próxima interação
-          this.touchStartTime = null;
-          return;
-        }
 
-        this.touchInProgress = true;
-        await nextTick();
-        this.expandedPanelVisible = !this.expandedPanelVisible;
-        setTimeout(() => {
-          this.touchInProgress = false;
-        }, 300);
+          this.touchInProgress = true;
+          await nextTick();
+          this.expandedPanelVisible = !this.expandedPanelVisible;
+          setTimeout(() => {
+            this.touchInProgress = false;
+          }, 300);
+        }
+        this.maxTouchPoints = 0;
       } else if (
         event.type === "touchcancel" &&
         event.target.className === "v-img__img v-img__img--cover"
