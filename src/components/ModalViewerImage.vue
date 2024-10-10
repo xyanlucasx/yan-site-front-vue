@@ -525,7 +525,6 @@ export default {
       this.toastInfo = true;
     },
     async toggleHoverExpansionPanel(event) {
-      console.log(event);
       if (
         event.type === "mouseleave" &&
         event.relatedTarget?.className === "v-overlay__scrim"
