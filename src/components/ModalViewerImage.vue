@@ -9,9 +9,10 @@
       style="overflow: visible; background-color: transparent"
       @mouseover="toggleHoverExpansionPanel"
       @mouseleave="toggleHoverExpansionPanel"
-      @touchstart="toggleHoverExpansionPanel"
-      @touchend="toggleHoverExpansionPanel"
+      @touchstart.capture="toggleHoverExpansionPanel"
       @touchmove="toggleHoverExpansionPanel"
+      @touchend="toggleHoverExpansionPanel"
+      @touchcancel.capture="toggleHoverExpansionPanel"
       :class="{ rotated: isRotated }"
     >
       <v-carousel
@@ -386,6 +387,7 @@ export default {
       toastInfo: false,
       toastMessage: "",
       delimiterPosition: "0px",
+      maxTouchPoints: 0,
       touchInProgress: false,
       touchStartX: null,
       touchEndX: 0,
@@ -533,12 +535,39 @@ export default {
         this.expandedPanelVisible = false;
       } else if (event.type === "mouseover" && !this.touchInProgress) {
         this.expandedPanelVisible = true;
-      } else if (event.type === "touchstart") {
-        window.alert("touchstart");
+      } else if (
+        event.type === "touchstart" &&
+        event.target.className === "v-img__img v-img__img--cover"
+      ) {
+        if (event.touches.length === 1 && event.changedTouches.length === 1) {
+          this.maxTouchPoints = 1;
+        } else {
+          this.maxTouchPoints = event.touches.length;
+        }
+      } else if (
+        event.type === "touchmove" &&
+        event.target.className === "v-img__img v-img__img--cover"
+      ) {
+        if (event.touches.length > this.maxTouchPoints) {
+          this.maxTouchPoints = event.touches.length;
+        }
+
+        if (event.touches.length === 1) {
+          if (this.touchStartX === null) {
+            this.touchStartX = event.touches[0].clientX;
+            this.touchStartTime = event.timeStamp;
+          }
+          this.touchEndX = event.touches[0].clientX;
+        }
       } else if (
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
+        if (event.touches.length !== 0 || this.maxTouchPoints !== 1) {
+          return;
+        }
+
+        this.maxTouchPoints = 0;
         this.touchEndTime = event.timeStamp;
 
         if (this.touchStartX !== null && this.touchStartTime !== null) {
@@ -566,15 +595,12 @@ export default {
           this.touchInProgress = false;
         }, 300);
       } else if (
-        event.type === "touchmove" &&
-        event.touches.length === 1 &&
+        event.type === "touchcancel" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
-        if (this.touchStartX === null) {
-          this.touchStartX = event.touches[0].clientX;
-          this.touchStartTime = event.timeStamp;
-        }
-        this.touchEndX = event.touches[0].clientX;
+        this.touchStartX = null;
+        this.touchStartTime = null;
+        this.maxTouchPoints = 0;
       }
     },
     toggleExpansionPanel() {
