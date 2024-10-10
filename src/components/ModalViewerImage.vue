@@ -534,7 +534,6 @@ export default {
         this.expandedPanelVisible = true;
       } else if (
         event.type === "touchend" &&
-        event.touches.length <= 1 &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
         this.touchEndTime = event.timeStamp;
