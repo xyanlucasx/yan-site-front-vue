@@ -563,7 +563,7 @@ export default {
         event.type === "touchend" &&
         event.target.className === "v-img__img v-img__img--cover"
       ) {
-        if (event.touches.length === 0 || this.maxTouchPoints === 1) {
+        if (event.touches.length === 0 && this.maxTouchPoints === 1) {
           this.touchEndTime = event.timeStamp;
 
           if (this.touchStartX !== null && this.touchStartTime !== null) {
