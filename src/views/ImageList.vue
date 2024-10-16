@@ -64,6 +64,7 @@
   <modal-image-edit
     v-model="imageModal"
     :image="selectedImage"
+    :tags="tags"
     @close-modal="imageModal = false"
     @modify-image="updateImage"
   />
@@ -111,6 +112,7 @@ export default {
         { text: "Taken At", value: "metadata.takenAt" },
       ],
       items: ref([]),
+      tags: [],
       loading: false,
       hasMore: true,
       totalImages: 0,
@@ -126,6 +128,9 @@ export default {
       error: false,
       errorMessage: "",
     };
+  },
+  async beforeMount() {
+    await this.loadTags();
   },
   methods: {
     async loadImages({ done }) {
@@ -159,6 +164,14 @@ export default {
         }
       } else {
         if (done) done("empty");
+      }
+    },
+    async loadTags() {
+      try {
+        const response = await this.$api.get("tags");
+        this.tags = response.data;
+      } catch (error) {
+        console.error("Erro ao carregar tags:", error);
       }
     },
     updateImage(image) {

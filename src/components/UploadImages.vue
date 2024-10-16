@@ -72,6 +72,7 @@
       v-model="imageModal"
       :image="uploadedImage"
       @close-modal="imageModal = false"
+      :tags="tags"
     />
   </v-app>
 </template>
@@ -94,7 +95,11 @@ export default {
       imageModal: false,
       uploadedImage: {},
       auxOriginalCheckbox: [false],
+      tags: [],
     };
+  },
+  async beforeMount() {
+    await this.loadTags();
   },
   methods: {
     async handleFileChange(index) {
@@ -120,6 +125,14 @@ export default {
         this.uploadedImage.images.push(item.original);
       }
       this.imageModal = true;
+    },
+    async loadTags() {
+      try {
+        const response = await this.$api.get("tags");
+        this.tags = response.data;
+      } catch (error) {
+        console.error("Erro ao carregar tags:", error);
+      }
     },
     async uploadImages() {
       this.loading = true;

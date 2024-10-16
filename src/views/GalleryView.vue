@@ -300,7 +300,6 @@
   </v-container>
   <modal-viewer-image
     v-model="viewerModal"
-    :display="display"
     :width="selectedImage?.metadata?.optimizedWidth"
     :height="selectedImage?.metadata?.optimizedHeight"
     :image="selectedImage"

@@ -29,7 +29,7 @@
           :key="i"
           :lazy-src="item?.lazyThumbnailBase64"
           cover
-          :src="cache[item?._id]"
+          :src="cache ? cache[item?._id] : item?.optimizedUrl"
           @load="() => $emit('finishLoadgImage')"
         >
           <template v-slot:placeholder
@@ -373,7 +373,6 @@ export default {
     height: Number,
     cache: Object,
     version: String,
-    display: Object,
     isRotated: Boolean,
   },
   data() {
@@ -402,6 +401,7 @@ export default {
     };
   },
   mounted() {
+    this.resize()
     screen.orientation.addEventListener("change", this.screenRotation);
   },
   beforeUnmount() {
